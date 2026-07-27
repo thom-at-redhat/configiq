@@ -9,7 +9,8 @@ This project is hosted on GitHub. Collaboration uses pull requests.
 
 ## Workflow
 
-- **Fork model**: Fork the upstream repo, push feature branches to your fork, open PRs against upstream.
+- **Remotes**: `origin` (`thom-at-redhat/gpu-calc-v2`) is the primary repo for this project — it has its own CI and Vercel deployment. `upstream` (`nb-qbits/gpu-calc-v2`) is present for reference only.
+- **Never open PRs against `upstream`.** All PRs target `origin/main`, even though this started as a fork.
 - **Branch protection**: Assume main/master is protected. Never force-push to main.
 - **Pull requests**: Use `gh pr create` with a descriptive title and body. Reference issue numbers where applicable.
 - **Reviews**: PRs require at least one approval before merge. Address review comments before re-requesting.
