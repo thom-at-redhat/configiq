@@ -25,6 +25,19 @@ assemble.sh --base --javascript --yaml --shell --security
 
 Add `--python` if the project also contains Python code.
 
+**Project override for gpu-calc-v2**: this repo does **not** use the
+`--javascript` snippet's `pre-commit/mirrors-eslint` hook. That hook pins its
+own ESLint + `typescript-eslint` as `additional_dependencies` in an isolated
+environment and requires a flat `eslint.config.js` — it does not pull in
+`eslint-config-next`, so it would lint with different (weaker, non-Next-aware)
+rules than `next lint` uses. Instead, `.pre-commit-config.yaml` has two
+`repo: local` / `language: system` hooks that shell out to this repo's own
+`npx eslint --fix` and `npx tsc --noEmit`, so the exact same config
+(`.eslintrc.json` → `next/core-web-vitals`) is enforced everywhere. This
+replaced Husky + lint-staged (see the "Project note: rh-multi-pre-commit" in
+`security.mdc` and CONTRIBUTING.md for why: Husky's `core.hooksPath`
+conflicts with the corporate `rh-multi-pre-commit` secret-scan hook).
+
 ## Configuration files
 
 - `eslint.config.js` (flat config) or `.eslintrc.*` (legacy) for ESLint.

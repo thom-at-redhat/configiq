@@ -57,6 +57,28 @@ The `--security` flag in `assemble.sh` adds:
 assemble.sh --base --security [--language and --platform flags]
 ```
 
+## Project note: rh-multi-pre-commit (gpu-calc-v2)
+
+`.git/hooks/pre-commit` in this environment is the corporate
+`rh-multi-pre-commit` shim (from `~/.git-template`, installed via
+`init.templatedir`), which always runs a global Red Hat gitleaks secret scan.
+It only *also* runs this repo's `.pre-commit-config.yaml` if local config is
+explicitly enabled:
+
+```bash
+git config rh-pre-commit.enableLocalConfig true
+```
+
+This is a **per-clone, local git config** (not committed) — every
+contributor must run it once after cloning. See CONTRIBUTING.md.
+
+**Do not use Husky (or anything else that sets `core.hooksPath`) in this
+repo.** `core.hooksPath` is an all-or-nothing override: setting it to
+`.husky/_` silently disables the corporate leak-scan hook for that
+contributor, because git stops looking in `.git/hooks/` entirely. This repo
+consolidates all commit-time checks into `.pre-commit-config.yaml` (including
+JS/TS linting — see `lang-javascript.mdc`) for exactly this reason.
+
 ## Best practices
 
 - Never commit `.env` files, `credentials.json`, private keys, or tokens.

@@ -24,6 +24,30 @@ Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`,
 `ci`, `build`, `perf`, `revert`. See `.cursor/rules/conventional-commits.mdc`
 for the full spec.
 
+## One-time setup: enable pre-commit hooks
+
+This repo's commit hooks run through Red Hat's `rh-multi-pre-commit` (already
+installed globally via your git template) rather than Husky, so they don't
+conflict with the corporate secret-leak scan. After cloning, run once:
+
+```bash
+git config rh-pre-commit.enableLocalConfig true
+```
+
+This is a local, per-clone git setting (not committed) — every contributor
+needs to run it. Without it, only the global Red Hat leak scan runs; this
+repo's own checks (ESLint, `tsc --noEmit`, `detect-secrets`, large-file
+checks, GitHub Actions linting, OpenSSF Scorecard) are silently skipped.
+
+You'll also need [`pre-commit`](https://pre-commit.com/#install) and, for the
+Scorecard hook, [Podman](https://podman.io/). Scorecard runs on every commit
+and can take 1–3 minutes (longer on the first run, while it pulls the
+container image); skip it for a single commit with `SKIP=scorecard git
+commit` if needed.
+
+**Do not install Husky or anything else that sets `git config
+core.hooksPath`** — see `.cursor/rules/security.mdc` for why.
+
 ## Before opening a PR
 
 CI runs automatically and must pass. Run the same checks locally:
@@ -34,10 +58,8 @@ npm run lint         # Must be clean — no ESLint errors
 npm run build        # Must succeed
 ```
 
-Pre-commit hooks (Husky) run lint-staged automatically on `git commit` so
-most issues are caught before you push. A `.pre-commit-config.yaml` is also
-available for repo-wide checks (secret detection, large files, GitHub Actions
-linting) — see `.cursor/rules/security.mdc` for setup if you want to opt in.
+These are also enforced by the pre-commit hooks above, so most issues are
+caught before you push.
 
 ## Code conventions
 

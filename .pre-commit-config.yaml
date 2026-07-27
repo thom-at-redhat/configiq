@@ -31,6 +31,26 @@ repos:
       - id: requirements-txt-fixer
         language_version: python3
 
+  # JavaScript/TypeScript — runs via `npx` against this repo's own installed
+  # ESLint + eslint-config-next (language: system), NOT a pre-commit-managed
+  # mirror. This intentionally replaces what Husky + lint-staged used to do;
+  # see CONTRIBUTING.md for why Husky was retired in favor of this file.
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint (project config, --fix)
+        entry: npx eslint --fix
+        language: system
+        files: \.(js|jsx|ts|tsx)$
+        exclude: ^docs/
+        types: [file]
+      - id: tsc
+        name: TypeScript type-check
+        entry: npx tsc --noEmit
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+
   # Secret detection
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
