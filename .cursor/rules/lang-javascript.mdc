@@ -1,0 +1,37 @@
+---
+description: JavaScript/TypeScript project linting and formatting rules
+alwaysApply: true
+---
+
+# Language: JavaScript / TypeScript
+
+## Linting
+
+- **ESLint**: Primary linter for JS/TS. Uses flat config (`eslint.config.js`) in ESLint v9+.
+- **JSHint**: Secondary linter for plain JavaScript (no TypeScript support). Useful for legacy codebases.
+- Both are included in the `javascript.yaml` pre-commit snippet.
+
+## Formatting
+
+- **Prettier**: Code formatter for JS, TS, JSON, CSS, SCSS, Markdown, YAML.
+- Line width: `--print-width=200` to match the project-wide 200-character standard.
+- Prettier may conflict with markdownlint on Markdown files. If both are enabled, ensure Prettier's Markdown formatting does not violate markdownlint rules.
+
+## Pre-commit hooks
+
+```bash
+assemble.sh --base --javascript --yaml --shell --security
+```
+
+Add `--python` if the project also contains Python code.
+
+## Configuration files
+
+- `eslint.config.js` (flat config) or `.eslintrc.*` (legacy) for ESLint.
+- `.prettierrc` or `prettier` key in `package.json` for Prettier.
+- `.jshintrc` for JSHint.
+- `tsconfig.json` for TypeScript compiler options.
+
+## Package security
+
+For Red Hat projects, the `rh-prodsec-npm` local hook checks npm packages against Red Hat Product Security advisories. Add it as a local hook if applicable.

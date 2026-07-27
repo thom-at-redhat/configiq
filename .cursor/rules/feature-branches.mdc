@@ -1,0 +1,31 @@
+---
+description: Always use feature branches — never commit or edit on main
+alwaysApply: true
+---
+
+<!-- Assisted by: cursor, claude -->
+
+# Feature branches (required)
+
+All changes happen on **`feature/*` branches** in git worktrees under `worktrees/`. **`main` is merge-only.**
+
+## Before editing tracked files
+
+1. Confirm `pwd` is under `worktrees/<name>/` (not the root working tree on `main`).
+2. Confirm current branch matches `feature/*` (`git branch --show-current`).
+3. If either check fails, create a worktree:
+
+```bash
+git worktree add worktrees/<name> -b feature/<name>
+cd worktrees/<name>
+```
+
+## Commits
+
+- Commit only from a `feature/*` branch inside `worktrees/`.
+- `no-commit-to-branch` blocks commits to `main`; do not bypass except per project rules (`SKIP=no-commit-to-branch` only for `make check` on main).
+- Merge to `main` locally after `make check` passes in the worktree (see `git-worktree-workflow.mdc`).
+
+## Agents
+
+Never implement, fix, or commit on `main`. Create or switch to a feature worktree first.

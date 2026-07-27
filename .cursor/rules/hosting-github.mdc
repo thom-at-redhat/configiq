@@ -1,0 +1,41 @@
+---
+description: Rules for GitHub-hosted projects (PR workflow, Actions, fork conventions)
+alwaysApply: true
+---
+
+# Hosting: GitHub Project
+
+This project is hosted on GitHub. Collaboration uses pull requests.
+
+## Workflow
+
+- **Fork model**: Fork the upstream repo, push feature branches to your fork, open PRs against upstream.
+- **Branch protection**: Assume main/master is protected. Never force-push to main.
+- **Pull requests**: Use `gh pr create` with a descriptive title and body. Reference issue numbers where applicable.
+- **Reviews**: PRs require at least one approval before merge. Address review comments before re-requesting.
+
+## GitHub Actions
+
+- Workflow files live in `.github/workflows/`.
+- **Pin actions to SHA**: Use full commit SHAs for third-party actions, not mutable tags. The `github.yaml` pre-commit snippet checks this.
+- **Lint workflows**: The `actionlint` hook validates workflow syntax.
+
+## Pre-commit hooks
+
+Include the `--github` snippet when assembling pre-commit config. **`--github` auto-includes scorecard** (OpenSSF Scorecard via Podman).
+
+For manual full `--repo` scans (not the pre-commit hook), use `~/.cursor/pre-commit-templates/scripts/scorecard-local.sh` or `~/.local/bin/scorecard-local` with `GITHUB_AUTH_TOKEN` set.
+
+```bash
+assemble.sh --base --security --github [--language flags as appropriate]
+```
+
+## Secrets
+
+- Never commit credentials, tokens, or API keys. The `--security` snippet includes `detect-secrets`.
+- Use GitHub Secrets for CI/CD credentials; reference them via `${{ secrets.NAME }}` in workflows.
+
+## Release conventions
+
+- Tag releases with semantic versioning: `vMAJOR.MINOR.PATCH`.
+- Use `gh release create` for GitHub Releases.

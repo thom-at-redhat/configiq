@@ -1,0 +1,59 @@
+---
+description: Conventional commit message format and enforcement
+alwaysApply: true
+---
+
+# Cross-Cutting: Conventional Commits
+
+## Format
+
+```text
+type(scope): description
+
+[optional body]
+
+[optional footer(s)]
+```
+
+## Allowed types
+
+- **feat**: New feature or capability
+- **fix**: Bug fix
+- **docs**: Documentation-only changes
+- **style**: Formatting, whitespace, missing semicolons (no code logic change)
+- **refactor**: Code restructuring without changing behavior
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks (dependency updates, config changes)
+- **ci**: CI/CD pipeline changes
+- **build**: Build system or external dependency changes
+- **perf**: Performance improvements
+- **revert**: Reverting a previous commit
+
+## Enforcement
+
+To enforce conventional commits via pre-commit, uncomment the hook in the `security.yaml` snippet or add directly:
+
+```yaml
+- repo: https://github.com/compilerla/conventional-pre-commit
+  rev: v4.0.0
+  hooks:
+    - id: conventional-pre-commit
+      stages: [commit-msg]
+      args: [feat, fix, docs, style, refactor, test, chore, ci, build, perf, revert]
+```
+
+This runs at the `commit-msg` stage (not `pre-commit`), so it requires:
+
+```bash
+pre-commit install --hook-type commit-msg
+```
+
+## Scope
+
+- Scope is optional but recommended for larger projects.
+- Use the component or module name: `feat(api): add pagination`, `fix(auth): handle expired tokens`.
+
+## Breaking changes
+
+- Append `!` after the type/scope: `feat(api)!: remove deprecated endpoint`.
+- Include `BREAKING CHANGE:` in the footer for detailed explanation.

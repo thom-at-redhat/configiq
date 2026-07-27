@@ -38,3 +38,6 @@ Thumbs.db
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# Git worktrees (feature branches; see .cursor/rules/git-worktree-workflow.mdc)
+worktrees/
