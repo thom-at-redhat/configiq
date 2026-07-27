@@ -6,7 +6,6 @@ import {
   Button,
   TextInput,
   FormSelect, FormSelectOption,
-  Switch,
   Label,
   Accordion, AccordionItem, AccordionToggle, AccordionContent,
 } from '@patternfly/react-core';
@@ -962,7 +961,7 @@ export default function QuickEstimate() {
                 ) : MODEL_CATALOG.find(m => m.hfId === model || m.id === model || m.name === model) ? (
                   <Label color="green" icon={<CheckCircleIcon />}>✓ In catalog</Label>
                 ) : hfConfig ? (
-                  <Label color="cyan" icon={<CheckCircleIcon />}>✓ Fetched from HuggingFace</Label>
+                  <Label color="teal" icon={<CheckCircleIcon />}>✓ Fetched from HuggingFace</Label>
                 ) : testError ? (
                   <Label color="red" icon={<ExclamationTriangleIcon />}>❌ Not found</Label>
                 ) : (
@@ -1635,38 +1634,58 @@ export default function QuickEstimate() {
 
           <Accordion asDefinitionList={false}>
             {buildAccordionSections().map((sec) => (
-              <AccordionItem key={sec.id}>
-                <AccordionToggle
-                  id={`acc-${sec.id}`}
-                  isExpanded={expanded.includes(sec.id)}
-                  onClick={() => toggleAcc(sec.id)}
-                >
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%' }}>
-                    <span className={styles.cardTitle} style={{ fontSize: 16 }}>{sec.title}</span>
-                    {'badge' in sec && sec.badge ? <Label isCompact color={sec.badgeColor as any}>{sec.badge}</Label> : null}
-                    {'hasOverride' in sec && sec.hasOverride && (
-                      <Button
-                        variant="link"
-                        isInline
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          sec.onOverrideToggle?.();
-                        }}
-                        style={{ fontSize: '13px', marginLeft: 'auto', padding: '4px 8px' }}
-                      >
-                        {sec.isOverridden ? '↺ Reset to auto' : '✎ Override'}
-                      </Button>
-                    )}
-                    {!expanded.includes(sec.id) && (
-                      <span className={styles.accSummary}>
-                        {sec.summary.map((p) => (
-                          <span key={p.k}><span className="k">{p.k}</span> {p.v}</span>
-                        ))}
-                      </span>
-                    )}
-                  </span>
-                </AccordionToggle>
-                <AccordionContent isHidden={!expanded.includes(sec.id)}>
+              <AccordionItem isExpanded={expanded.includes(sec.id)} key={sec.id}>
+                {/* AccordionToggle renders a native <button>; a nested PatternFly
+                    Button would also render a <button>, which is invalid HTML
+                    (button-in-button) and breaks hydration. The override button
+                    is rendered as an absolutely-positioned sibling instead, so
+                    it sits visually inside the toggle row without being a DOM
+                    descendant of the toggle's own <button>. */}
+                <div style={{ position: 'relative' }}>
+                  <AccordionToggle
+                    id={`acc-${sec.id}`}
+                    onClick={() => toggleAcc(sec.id)}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', width: '100%' }}>
+                      <span className={styles.cardTitle} style={{ fontSize: 16 }}>{sec.title}</span>
+                      {'badge' in sec && sec.badge ? <Label isCompact color={sec.badgeColor as any}>{sec.badge}</Label> : null}
+                      {'hasOverride' in sec && sec.hasOverride && (
+                        // Reserve space for the sibling override button so the
+                        // toggle text doesn't render underneath it.
+                        <span style={{ marginLeft: 'auto', width: 110 }} aria-hidden="true" />
+                      )}
+                      {!expanded.includes(sec.id) && (
+                        <span className={styles.accSummary}>
+                          {sec.summary.map((p) => (
+                            <span key={p.k}><span className="k">{p.k}</span> {p.v}</span>
+                          ))}
+                        </span>
+                      )}
+                    </span>
+                  </AccordionToggle>
+                  {'hasOverride' in sec && sec.hasOverride && (
+                    <Button
+                      variant="link"
+                      isInline
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        sec.onOverrideToggle?.();
+                      }}
+                      style={{
+                        fontSize: '13px',
+                        padding: '4px 8px',
+                        position: 'absolute',
+                        top: '50%',
+                        right: 40,
+                        transform: 'translateY(-50%)',
+                        zIndex: 1,
+                      }}
+                    >
+                      {sec.isOverridden ? '↺ Reset to auto' : '✎ Override'}
+                    </Button>
+                  )}
+                </div>
+                <AccordionContent >
                   <div className={styles.accGrid}>
                     {sec.fields.map((f: any) => (
                       <div key={f.label} className={styles.accField}>

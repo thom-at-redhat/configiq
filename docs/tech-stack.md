@@ -11,14 +11,17 @@ Chosen over a plain React SPA because:
 App Router (not Pages Router) because it is the current standard and avoids
 a future migration.
 
-## PatternFly v5
+## PatternFly v6
 
 Chosen over shadcn/ui + Tailwind because:
 - gpu-calc follows Red Hat brand standards
 - PatternFly is Red Hat's own design system — zero theming work
 - Built for data-dense, engineer-facing tools (exactly this use case)
-- Includes charts (Victory Charts) — no separate chart library needed
 - WCAG AA accessible out of the box
+
+Charts (e.g. the GPU Explorer bubble chart) are hand-rolled inline SVG, not
+PatternFly/Victory Charts — `@patternfly/react-charts` was a declared but
+unused dependency, removed during the v6 migration.
 
 Tailwind was explicitly dropped to avoid overlapping styling systems.
 

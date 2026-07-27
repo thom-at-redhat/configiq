@@ -86,7 +86,7 @@
 Add `<JargonPopover>` next to every jargon term:
 
 **Result cards:**
-- [ ] "KV cache / request" 
+- [ ] "KV cache / request"
 - [ ] "Tensor parallel"
 
 **Constraints section:**
@@ -139,6 +139,14 @@ Per theme.css guidelines:
 ---
 
 ## 🎨 CSS Additions Needed
+
+> **Not yet implemented, and pre-dates the PatternFly v6 migration.** The
+> `pf-v5-c-*` selectors and `[hidden]`-attribute approach below assume PF5's
+> `AccordionContent isHidden` markup. PF6 moved expand/collapse state to the
+> parent `AccordionItem` and dropped `AccordionContent`'s `isHidden` prop
+> (see `app/quick-estimate/QuickEstimate.tsx` for the current pattern), so
+> this snippet needs re-verification against the actual rendered markup
+> before it's used, not just a `pf-v5-c-` → `pf-v6-c-` rename.
 
 Add to `app/globals.css` or `app/theme.css`:
 

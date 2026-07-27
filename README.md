@@ -48,8 +48,8 @@ npm run lint         # ESLint
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 14 App Router + TypeScript |
-| UI | PatternFly v5 (Red Hat design system) |
+| Framework | Next.js 16 App Router + TypeScript |
+| UI | PatternFly v6 (Red Hat design system) |
 | Fonts | Red Hat Display / Text / Mono |
 | Deployment | Vercel |
 

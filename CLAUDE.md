@@ -11,9 +11,11 @@ at nb-qbits.github.io/gpu-calc.
 
 ## Tech stack
 
-- **Framework**: Next.js 14 App Router + TypeScript
-- **UI**: PatternFly v5 (Red Hat's design system) — no Tailwind, no shadcn
-- **Charts**: PatternFly Victory Charts
+- **Framework**: Next.js 16 App Router + TypeScript + React 19
+- **UI**: PatternFly v6 (Red Hat's design system) — no Tailwind, no shadcn
+- **Charts**: hand-rolled inline SVG (e.g. `app/gpu-explorer/GpuBubbleChart.tsx`) —
+  `@patternfly/react-charts` was a declared but entirely unused dependency and
+  was removed during the PatternFly v6 migration
 - **Fonts**: Plus Jakarta Sans (display, body), JetBrains Mono (numbers, technical labels)
 - **Deployment**: Vercel
 
@@ -23,7 +25,7 @@ at nb-qbits.github.io/gpu-calc.
 
 - **[docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)** - Complete design system
   - Typography scale and font usage rules
-  - Color palette and contrast requirements  
+  - Color palette and contrast requirements
   - Spacing scale and layout patterns
   - Reusable component patterns (flip tiles, search, accordions, tour)
   - Animation guidelines and accessibility requirements
@@ -103,11 +105,16 @@ or too small.
 Define these as CSS custom properties in a global stylesheet and use them for
 ALL text. Also override the matching PatternFly global tokens.
 
-- Primary text   #151515  → --pf-v5-global--Color--100
-- Secondary text #3c3f42  → --pf-v5-global--Color--200  (PF default #6a6e73 is too light — override it)
+- Primary text   #151515  → --pf-t--global--text--color--regular
+- Secondary text #3c3f42  → --pf-t--global--text--color--subtle  (PF default #6a6e73 is too light — override it)
 - Caption (min)  #54585c  — lightest gray allowed; captions only
-- Interactive    #0066cc  (links, buttons) — --pf-v5-global--primary-color--100
+- Interactive    #0066cc  (links, buttons) — --pf-t--global--color--brand--default
 - Brand red      #ee0000  — LOGO ONLY. Never text, never buttons.
+
+(Token names above are PatternFly v6's role-based `--pf-t--global--*` design
+tokens — see `app/theme.css` for the actual overrides. PF5 used flat
+`--pf-v5-global--Color--100` / `--Color--200` / `--primary-color--100`
+tokens; this project migrated to v6 in 2026-07.)
 
 Contrast rule: body copy, descriptions, table/detail values, and constraint
 rows must be #3c3f42 (Color--200) or darker. #54585c is only for short uppercase

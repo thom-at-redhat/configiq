@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Card } from "@patternfly/react-core";
 
 interface HoverCardProps {
   children: React.ReactNode;

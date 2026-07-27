@@ -8,7 +8,7 @@ Wire the real GPU math / HuggingFace fetch behind it later.
 
 | File | What it is |
 |---|---|
-| `QuickEstimate.tsx` | Main page composition (PatternFly v5 + the module CSS). |
+| `QuickEstimate.tsx` | Main page composition (PatternFly v6 + the module CSS). |
 | `QuickEstimate.module.css` | All styling — type scale, flip tiles, scenarios, constraints, drivers, memory bar. Uses `--gc-*` theme tokens with safe fallbacks. |
 | `quickEstimateHelpers.tsx` | `FlipTile`, `Sparkline`, `useCountUp`, and `Term` (the "?" glossary popovers). |
 | `mockEstimate.ts` | Hardcoded sample estimate + the glossary copy lives in helpers. |
@@ -18,7 +18,7 @@ Wire the real GPU math / HuggingFace fetch behind it later.
 
 1. Copy `QuickEstimate.tsx`, `QuickEstimate.module.css`, `quickEstimateHelpers.tsx`,
    and `mockEstimate.ts` into `app/quick-estimate/` (or your components dir).
-2. Make sure these are available (they're standard in a PatternFly v5 app):
+2. Make sure these are available (they're standard in a PatternFly v6 app):
    - `@patternfly/react-core`
    - `@patternfly/react-icons`
 3. Render `<QuickEstimate />` from your route. The component is `'use client'`.

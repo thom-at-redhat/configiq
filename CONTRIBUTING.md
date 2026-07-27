@@ -68,7 +68,7 @@ caught before you push.
    results.
 
 2. **PatternFly only** — do not add Tailwind, shadcn/ui, or any other
-   component library. PatternFly v5 is the single source of truth for UI
+   component library. PatternFly v6 is the single source of truth for UI
    components.
 
 3. **Red Hat design system** — use the established CSS variables (`--rh-red`,

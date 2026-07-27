@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardBody } from "@patternfly/react-core";
 
 interface FlipCardProps {
   front: React.ReactNode;

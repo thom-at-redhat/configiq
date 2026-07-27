@@ -7,7 +7,7 @@ import RoutingEconomics from './RoutingEconomics'
 export default function Page() {
   return (
     <ComingSoonRibbon>
-      <PageSection
+      <PageSection hasBodyWrapper={false}
         padding={{ default: 'noPadding' }}
         style={{
           backgroundColor: 'var(--gc-bg-2, #f5f5f5)',

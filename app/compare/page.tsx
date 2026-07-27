@@ -4,11 +4,10 @@ import * as React from 'react';
 import {
   PageSection,
   Title,
-  Text,
+  Content,
   Button,
   Card,
   CardBody,
-  Alert,
 } from '@patternfly/react-core';
 import Link from 'next/link';
 import { getSavedEstimates, deleteEstimate, clearAllEstimates, type SavedEstimate } from '@/lib/saved-estimates';
@@ -234,15 +233,15 @@ export default function ComparePage() {
 
   if (estimates.length === 0) {
     return (
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <div style={{ maxWidth: '600px', margin: '80px auto', textAlign: 'center' }}>
           <div style={{ fontSize: '48px', marginBottom: '24px' }}>📊</div>
           <Title headingLevel="h1" size="2xl" style={{ marginBottom: '12px' }}>
             No saved estimates yet
           </Title>
-          <Text style={{ marginBottom: '32px', color: '#6a6e73', fontSize: '15px' }}>
+          <Content component="p" style={{ marginBottom: '32px', color: '#6a6e73', fontSize: '15px' }}>
             Run a Quick Estimate and click &ldquo;Save estimate&rdquo; to compare configurations here.
-          </Text>
+          </Content>
           <Link href="/quick-estimate">
             <Button variant="primary" size="lg">
               → Go to Quick Estimate
@@ -255,12 +254,12 @@ export default function ComparePage() {
 
   return (
     <>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <Title headingLevel="h1" size="2xl">Saved Results</Title>
-        <Text>Compare workloads side by side. Save from Quick Estimate.</Text>
+        <Content component="p">Compare workloads side by side. Save from Quick Estimate.</Content>
       </PageSection>
 
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         {/* Toolbar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -287,9 +286,9 @@ export default function ComparePage() {
             </div>
             {showCioSummary && (
               <div style={{ marginTop: '16px' }}>
-                <Text style={{ marginBottom: '16px', lineHeight: 1.6 }}>
+                <Content component="p" style={{ marginBottom: '16px', lineHeight: 1.6 }}>
                   {generateCioSummary()}
-                </Text>
+                </Content>
                 <Button variant="secondary" size="sm" onClick={copyCioSummary}>
                   Copy for CIO deck
                 </Button>

@@ -28,15 +28,29 @@ Add `--python` if the project also contains Python code.
 **Project override for gpu-calc-v2**: this repo does **not** use the
 `--javascript` snippet's `pre-commit/mirrors-eslint` hook. That hook pins its
 own ESLint + `typescript-eslint` as `additional_dependencies` in an isolated
-environment and requires a flat `eslint.config.js` — it does not pull in
-`eslint-config-next`, so it would lint with different (weaker, non-Next-aware)
-rules than `next lint` uses. Instead, `.pre-commit-config.yaml` has two
+environment and would lint with a different, non-Next-aware config than the
+one this repo actually uses. Instead, `.pre-commit-config.yaml` has two
 `repo: local` / `language: system` hooks that shell out to this repo's own
 `npx eslint --fix` and `npx tsc --noEmit`, so the exact same config
-(`.eslintrc.json` → `next/core-web-vitals`) is enforced everywhere. This
-replaced Husky + lint-staged (see the "Project note: rh-multi-pre-commit" in
-`security.mdc` and CONTRIBUTING.md for why: Husky's `core.hooksPath`
-conflicts with the corporate `rh-multi-pre-commit` secret-scan hook).
+(`eslint.config.mjs` → `eslint-config-next/core-web-vitals`) is enforced
+everywhere. This replaced Husky + lint-staged (see the "Project note:
+rh-multi-pre-commit" in `security.mdc` and CONTRIBUTING.md for why: Husky's
+`core.hooksPath` conflicts with the corporate `rh-multi-pre-commit`
+secret-scan hook).
+
+Next.js 16 removed the `next lint` command entirely, so `npm run lint` (and
+the pre-commit hook above) call `eslint` directly against `eslint.config.mjs`
+— a flat config that re-exports `eslint-config-next/core-web-vitals`.
+Deliberately not `eslint-config-next/typescript`: this project relies on
+`npm run type-check` for type safety and never opted into the
+`typescript-eslint` recommended ruleset, so adding it now would be an
+unrelated ~100-finding lint-strictness change. `eslint-plugin-react-hooks` is
+pinned to `^5.2.0` via `package.json`'s `overrides` — `eslint-config-next@16`
+bundles `eslint-plugin-react-hooks@^7`, whose new React-Compiler-oriented
+rules (`set-state-in-effect`, `static-components`, etc.) flagged ~30 issues
+across existing components. Those are legitimate findings worth fixing, just
+not as an incidental part of a dependency-version-upgrade commit — revisit
+this pin as a dedicated follow-up.
 
 ## Configuration files
 

@@ -4,7 +4,7 @@ import * as React from 'react';
 import {
   PageSection,
   Title,
-  TextContent,
+  Content,
   ToggleGroup,
   ToggleGroupItem,
   Card,
@@ -12,7 +12,6 @@ import {
   Flex,
   FlexItem,
   Label,
-  Text
 } from "@patternfly/react-core";
 import { GPU_CATALOG } from '@/lib/gpu-math/gpus';
 import { GpuBubbleChart } from './GpuBubbleChart';
@@ -122,24 +121,24 @@ export default function GpuExplorerPage() {
 
   return (
     <>
-      <PageSection variant="light">
-        <TextContent>
+      <PageSection hasBodyWrapper={false}>
+        <Content>
           <Title headingLevel="h1" size="2xl">GPU Explorer</Title>
-          <Text>
+          <Content component="p">
             LLM inference planning — compare GPU generations by memory, bandwidth, and cost efficiency
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
       </PageSection>
 
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Card>
           <CardBody>
             <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsMd' }}>
               {/* Presets */}
               <FlexItem>
-                <Text component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
+                <Content component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
                   Preset:
-                </Text>
+                </Content>
                 <ToggleGroup>
                   <ToggleGroupItem text="Balanced" isSelected={preset === 'balanced'} onChange={() => setPreset('balanced')} />
                   <ToggleGroupItem text="Cost Efficiency" isSelected={preset === 'cost-efficiency'} onChange={() => setPreset('cost-efficiency')} />
@@ -151,9 +150,9 @@ export default function GpuExplorerPage() {
               <FlexItem>
                 <Flex spaceItems={{ default: 'spaceItemsLg' }}>
                   <FlexItem>
-                    <Text component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', fontSize: '14px' }}>
+                    <Content component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', fontSize: '14px' }}>
                       Vendor:
-                    </Text>
+                    </Content>
                   </FlexItem>
                   <FlexItem>
                     <Label
@@ -180,9 +179,9 @@ export default function GpuExplorerPage() {
               <FlexItem>
                 <Flex direction={{ default: 'row' }} spaceItems={{ default: 'spaceItemsLg' }}>
                   <FlexItem flex={{ default: 'flex_1' }}>
-                    <Text component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
+                    <Content component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
                       X Axis:
-                    </Text>
+                    </Content>
                     <ToggleGroup>
                       <ToggleGroupItem text="VRAM" isSelected={xAxis === 'vram'} onChange={() => setXAxis('vram')} />
                       <ToggleGroupItem text="HW Cost" isSelected={xAxis === 'price'} onChange={() => setXAxis('price')} />
@@ -192,9 +191,9 @@ export default function GpuExplorerPage() {
                   </FlexItem>
 
                   <FlexItem flex={{ default: 'flex_1' }}>
-                    <Text component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
+                    <Content component="p" style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6a6e73', marginBottom: '8px', display: 'block', fontSize: '14px' }}>
                       Y Axis:
-                    </Text>
+                    </Content>
                     <ToggleGroup>
                       <ToggleGroupItem text="VRAM" isSelected={yAxis === 'vram'} onChange={() => setYAxis('vram')} />
                       <ToggleGroupItem text="HW Cost" isSelected={yAxis === 'price'} onChange={() => setYAxis('price')} />
@@ -209,12 +208,12 @@ export default function GpuExplorerPage() {
               <FlexItem style={{ marginTop: '24px' }}>
                 {!mounted ? (
                   <div style={{ padding: '60px', textAlign: 'center', background: '#f5f5f5', borderRadius: '8px' }}>
-                    <Text component="p" style={{ color: '#6a6e73' }}>Loading chart...</Text>
+                    <Content component="p" style={{ color: '#6a6e73' }}>Loading chart...</Content>
                   </div>
                 ) : allData.length === 0 ? (
                   <div style={{ padding: '60px', textAlign: 'center', background: '#f5f5f5', borderRadius: '8px' }}>
-                    <Text component="h3" style={{ color: '#6a6e73', marginBottom: '8px' }}>No data available</Text>
-                    <Text component="p" style={{ color: '#6a6e73', fontSize: '14px' }}>Try selecting a different vendor filter</Text>
+                    <Content component="h3" style={{ color: '#6a6e73', marginBottom: '8px' }}>No data available</Content>
+                    <Content component="p" style={{ color: '#6a6e73', fontSize: '14px' }}>Try selecting a different vendor filter</Content>
                   </div>
                 ) : (
                   <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
@@ -233,22 +232,22 @@ export default function GpuExplorerPage() {
               <FlexItem>
                 <Card isCompact>
                   <CardBody>
-                    <Text component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
+                    <Content component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
                       💡 <strong>Top-right = high VRAM and throughput.</strong> These GPUs handle larger models and longer contexts.
-                    </Text>
-                    <Text component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
+                    </Content>
+                    <Content component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
                       <strong>Bubble size</strong> represents tokens-per-dollar efficiency. Larger bubbles = better cost efficiency (more tokens generated per dollar spent).
-                    </Text>
-                    <Text component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
+                    </Content>
+                    <Content component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
                       <strong>Throughput Index</strong> is a planning metric derived from memory bandwidth, VRAM, and architecture generation.
                       It enables relative GPU comparison — not exact model throughput.
-                    </Text>
-                    <Text component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
+                    </Content>
+                    <Content component="p" style={{ display: 'block', marginBottom: '8px', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
                       <strong>Inference performance</strong> depends on model architecture (GQA vs MHA), sequence length, batching, and inference backend (vLLM, TensorRT-LLM, etc.).
-                    </Text>
-                    <Text component="p" style={{ display: 'block', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
+                    </Content>
+                    <Content component="p" style={{ display: 'block', color: '#3c3f42', fontSize: '13px', lineHeight: '1.6' }}>
                       <strong>Hardware cost</strong> shown in data is GPU purchase price (USD, one-time). Hourly cloud pricing varies by provider and region.
-                    </Text>
+                    </Content>
                   </CardBody>
                 </Card>
               </FlexItem>

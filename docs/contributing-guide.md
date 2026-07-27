@@ -194,7 +194,7 @@ Follow these so the codebase stays consistent across contributors.
 
 ### PatternFly only for UI
 
-Do not install Tailwind, shadcn/ui, Material UI, or any other component library. PatternFly v5 is the only component library. If you need a UI pattern, check [patternfly.org](https://www.patternfly.org) first.
+Do not install Tailwind, shadcn/ui, Material UI, or any other component library. PatternFly v6 is the only component library. If you need a UI pattern, check [patternfly.org](https://www.patternfly.org) first.
 
 ### Red Hat design system for colors and fonts
 
