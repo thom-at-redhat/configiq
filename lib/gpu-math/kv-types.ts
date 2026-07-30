@@ -293,7 +293,7 @@ export interface DetectionResult {
   warnings?:  string[]
 }
 
-// ─── Model families (from lib/data/model-families.json) ──────────────────────
+// ─── Model families (from lib/gpu-math/model-families.json) ──────────────────
 
 export interface ModelFamilyEntry {
   kv_category?:               KVCategory
@@ -309,6 +309,8 @@ export interface ModelFamilyEntry {
     expand:  { value: number; confidence: Confidence }
   }
   block_types_fields?: string[]
+  attention_type?:     string
+  window_field?:       string
   fallback?:           string
   verified?:           boolean
   config_fallbacks_by_layers?: Record<string, {

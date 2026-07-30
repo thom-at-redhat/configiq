@@ -9,23 +9,38 @@
   },
   "recurrent_gemma": {
     "kv_category": "KV-5c",
-    "verified": true
+    "verified": true,
+    "block_types_fields": ["_block_types", "block_types", "layers_block_type"],
+    "attention_type": "local",
+    "window_field": "attention_window_size"
   },
   "hawk": {
     "kv_category": "KV-5c",
-    "verified": true
+    "verified": true,
+    "block_types_fields": ["_block_types", "block_types", "layers_block_type"]
   },
   "griffin": {
     "kv_category": "KV-5c",
-    "verified": true
+    "verified": true,
+    "block_types_fields": ["_block_types", "block_types", "layers_block_type"]
   },
   "mamba": {
     "kv_category": "KV-5a",
-    "verified": true
+    "verified": true,
+    "state_defaults": {
+      "d_state": { "value": 16, "confidence": "medium" },
+      "d_conv":  { "value": 4,  "confidence": "medium" },
+      "expand":  { "value": 2,  "confidence": "medium" }
+    }
   },
   "mamba2": {
     "kv_category": "KV-5a",
-    "verified": true
+    "verified": true,
+    "state_defaults": {
+      "d_state": { "value": 128, "confidence": "medium" },
+      "d_conv":  { "value": 4,   "confidence": "medium" },
+      "expand":  { "value": 2,   "confidence": "medium" }
+    }
   },
   "rwkv": {
     "kv_category": "KV-5a",
@@ -33,7 +48,12 @@
   },
   "falcon_mamba": {
     "kv_category": "KV-5a",
-    "verified": true
+    "verified": true,
+    "state_defaults": {
+      "d_state": { "value": 16, "confidence": "medium" },
+      "d_conv":  { "value": 4,  "confidence": "medium" },
+      "expand":  { "value": 2,  "confidence": "medium" }
+    }
   },
   "gemma3_text": {
     "kv_category": "KV-3b",
@@ -61,5 +81,22 @@
       }
     },
     "notes": "Gemma 3 4B text_config is incomplete on HuggingFace. Values from Unsloth verified config and transformers Gemma3TextConfig defaults. head_dim not derivable from hidden_size for Gemma."
+  },
+  "qwen2_vl": {
+    "max_window_layers_semantics": "first_N_layers_are_full",
+    "fallback": "require_layer_types_or_ask_user"
+  },
+  "qwen2_5_vl": {
+    "max_window_layers_semantics": "first_N_layers_are_full",
+    "fallback": "require_layer_types_or_ask_user"
+  },
+  "qwen2": {
+    "max_window_layers_semantics": "version_sensitive_or_ambiguous",
+    "fallback": "require_layer_types_or_ask_user",
+    "notes": "Covers Qwen2 and Qwen2.5 — both use model_type=qwen2"
+  },
+  "qwen3": {
+    "max_window_layers_semantics": "version_sensitive_or_ambiguous",
+    "fallback": "require_layer_types_or_ask_user"
   }
 }
