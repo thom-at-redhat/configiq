@@ -1,0 +1,24 @@
+---
+description: Git remote conventions — origin vs upstream, PR/MR target
+alwaysApply: true
+---
+
+# Git remotes
+
+This repo has two remotes:
+
+- `origin` (`thom-at-redhat/configiq`) — the primary repo for this project.
+  It has its own CI and Vercel deployment. All branches, PRs, and MRs are
+  pushed here.
+- `upstream` (`openshift-psap/configiq`) — reference-only. Fetch from it if
+  you need to compare or pull in changes, but never push to it.
+
+## Rule
+
+**Never open a PR or MR against `upstream`.** Even though this project
+started as a fork, `upstream` is not the collaboration target — all pull
+requests / merge requests target `origin/main`.
+
+- When using `gh pr create` (or any MR tooling), always verify the target
+  repo/base resolves to `origin`, not `upstream`.
+- Do not push branches to `upstream` under any circumstances.
