@@ -11,6 +11,9 @@ out/
 build/
 dist/
 
+# Git worktrees (avoid accidentally tracking node_modules/.next from worktree checkouts)
+worktrees/
+
 # Environment variables
 .env
 .env.local
