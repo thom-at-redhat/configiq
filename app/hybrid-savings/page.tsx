@@ -12,7 +12,7 @@ export default function HybridSavingsPage() {
         </Content>
       </PageSection>
       <PageSection hasBodyWrapper={false}>
-        <EmptyState titleText={<Title headingLevel="h2" size="lg">Coming soon</Title>}>
+        <EmptyState headingLevel="h2" titleText="Coming soon">
           <CubesIcon />
           <EmptyStateBody>
             This tool is being ported from the original gpu-calc static site.
