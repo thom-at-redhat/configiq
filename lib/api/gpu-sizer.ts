@@ -63,7 +63,6 @@ export function generateRequestId(): string {
 
 // ─── Service ─────────────────────────────────────────────────────────────────
 
-const DEFAULT_URL = 'http://163.74.81.138:7860/gpu_sizer'
 const DEFAULT_TIMEOUT_SECONDS = 90
 
 export async function callGpuSizer(
@@ -72,12 +71,12 @@ export async function callGpuSizer(
   const requestId = generateRequestId()
   const startTime = performance.now()
 
-  const url = process.env.GPU_SIZER_URL || DEFAULT_URL
+  const url = process.env.GPU_SIZER_URL
   const username = process.env.GPU_SIZER_USERNAME
   const password = process.env.GPU_SIZER_PASSWORD
   const timeoutSeconds = parseInt(process.env.GPU_SIZER_TIMEOUT_SECONDS || '', 10) || DEFAULT_TIMEOUT_SECONDS
 
-  if (!username || !password) {
+  if (!url || !username || !password) {
     return makeError(requestId, 'GPU_SIZER_NOT_CONFIGURED', 'GPU sizing service is not configured')
   }
 

@@ -251,6 +251,15 @@ describe('callKvCacheCalc', () => {
     expect((result as KvCacheCalcErrorResponse).error.code).toBe('KV_CACHE_NOT_CONFIGURED')
   })
 
+  it('returns KV_CACHE_NOT_CONFIGURED when URL is missing (no hardcoded fallback)', async () => {
+    vi.stubEnv('AICONFIGURATOR_API_URL', '')
+
+    const result = await callKvCacheCalc(VALID_REQUEST)
+
+    expect(result.status).toBe('failed')
+    expect((result as KvCacheCalcErrorResponse).error.code).toBe('KV_CACHE_NOT_CONFIGURED')
+  })
+
   it('returns KV_CACHE_TIMEOUT on fetch timeout', async () => {
     const timeoutError = new Error('signal timed out')
     timeoutError.name = 'TimeoutError'

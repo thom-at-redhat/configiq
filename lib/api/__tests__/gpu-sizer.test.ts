@@ -221,6 +221,15 @@ describe('callGpuSizer', () => {
     expect((result as GpuSizerErrorResponse).error.code).toBe('GPU_SIZER_NOT_CONFIGURED')
   })
 
+  it('returns GPU_SIZER_NOT_CONFIGURED when URL is missing (no hardcoded fallback)', async () => {
+    vi.stubEnv('GPU_SIZER_URL', '')
+
+    const result = await callGpuSizer(VALID_REQUEST)
+
+    expect(result.status).toBe('failed')
+    expect((result as GpuSizerErrorResponse).error.code).toBe('GPU_SIZER_NOT_CONFIGURED')
+  })
+
   it('returns GPU_SIZER_TIMEOUT on fetch timeout', async () => {
     const timeoutError = new Error('signal timed out')
     timeoutError.name = 'TimeoutError'

@@ -56,7 +56,6 @@ export function generateKvRequestId(): string {
 
 // ─── Service ─────────────────────────────────────────────────────────────────
 
-const DEFAULT_URL = 'http://163.74.81.138:7860'
 const DEFAULT_TIMEOUT_SECONDS = 90
 
 export async function callKvCacheCalc(
@@ -65,12 +64,12 @@ export async function callKvCacheCalc(
   const requestId = generateKvRequestId()
   const startTime = performance.now()
 
-  const baseUrl = process.env.AICONFIGURATOR_API_URL || DEFAULT_URL
+  const baseUrl = process.env.AICONFIGURATOR_API_URL
   const username = process.env.AICONFIGURATOR_USERNAME
   const password = process.env.AICONFIGURATOR_PASSWORD
   const timeoutSeconds = parseInt(process.env.AICONFIGURATOR_TIMEOUT_SECONDS || '', 10) || DEFAULT_TIMEOUT_SECONDS
 
-  if (!username || !password) {
+  if (!baseUrl || !username || !password) {
     return makeError(requestId, 'KV_CACHE_NOT_CONFIGURED', 'KV cache calculator service is not configured')
   }
 
