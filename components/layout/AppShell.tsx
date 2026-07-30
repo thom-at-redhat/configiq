@@ -7,7 +7,7 @@ import {
   PageSidebarBody,
   Masthead,
   MastheadMain,
-  MastheadBrand,
+  MastheadLogo, MastheadBrand,
   Nav,
   NavList,
   NavItem,
@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const masthead = (
     <Masthead style={{ backgroundColor: "#1a1a1a", borderBottom: "1px solid #2d2d2d" }}>
       <MastheadMain>
-        <MastheadBrand>
+        <MastheadBrand data-codemods><MastheadLogo data-codemods>
           <Link
             href="/"
             style={{
@@ -77,7 +77,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               }}>An internal community project — not an official Red Hat product.</span>
             </span>
           </Link>
-        </MastheadBrand>
+        </MastheadLogo></MastheadBrand>
       </MastheadMain>
     </Masthead>
   );
@@ -138,14 +138,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       }}
     >
       <PageSidebarBody>
-        <Nav theme="dark" aria-label="Main navigation" style={{
-          '--pf-v5-c-nav__link--after--BorderColor': 'transparent',
-          '--pf-v5-c-nav__link--after--BorderWidth': '0'
+        <Nav  aria-label="Main navigation" style={{
+          // PF6 dropped the item-level ::after indicator and consolidated the
+          // link-level one onto --pf-v6-c-nav__link--BorderWidth/BorderColor
+          // (still rendered via ::after, just renamed and no longer split by
+          // hover/current state at the *item* level). Zero out width in every
+          // state we touch so no decorative border draws over our red
+          // background-color indicator (see globals.css).
+          '--pf-v6-c-nav__link--BorderWidth': '0',
+          '--pf-v6-c-nav__link--hover--BorderWidth': '0',
+          '--pf-v6-c-nav__link--m-current--BorderWidth': '0',
+          '--pf-v6-c-nav__link--BorderColor': 'transparent',
         } as React.CSSProperties}>
-          <NavList style={{
-            '--pf-v5-c-nav__item--after--BorderColor': 'transparent',
-            '--pf-v5-c-nav__item--after--BorderWidth': '0'
-          } as React.CSSProperties}>
+          <NavList>
             <NavItemWithIcon
               icon={HomeIcon}
               label="Home"
@@ -242,7 +247,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <Page
-      header={masthead}
+      masthead={masthead}
       sidebar={sidebar}
       isManagedSidebar
       style={{ backgroundColor: "#f5f5f5" }}

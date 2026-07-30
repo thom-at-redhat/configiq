@@ -1,0 +1,64 @@
+---
+description: JavaScript/TypeScript project linting and formatting rules
+alwaysApply: true
+---
+
+# Language: JavaScript / TypeScript
+
+## Linting
+
+- **ESLint**: Primary linter for JS/TS. Uses flat config (`eslint.config.js`) in ESLint v9+.
+- **JSHint**: Secondary linter for plain JavaScript (no TypeScript support). Useful for legacy codebases.
+- Both are included in the `javascript.yaml` pre-commit snippet.
+
+## Formatting
+
+- **Prettier**: Code formatter for JS, TS, JSON, CSS, SCSS, Markdown, YAML.
+- Line width: `--print-width=200` to match the project-wide 200-character standard.
+- Prettier may conflict with markdownlint on Markdown files. If both are enabled, ensure Prettier's Markdown formatting does not violate markdownlint rules.
+
+## Pre-commit hooks
+
+```bash
+assemble.sh --base --javascript --yaml --shell --security
+```
+
+Add `--python` if the project also contains Python code.
+
+**Project override for gpu-calc-v2**: this repo does **not** use the
+`--javascript` snippet's `pre-commit/mirrors-eslint` hook. That hook pins its
+own ESLint + `typescript-eslint` as `additional_dependencies` in an isolated
+environment and would lint with a different, non-Next-aware config than the
+one this repo actually uses. Instead, `.pre-commit-config.yaml` has two
+`repo: local` / `language: system` hooks that shell out to this repo's own
+`npx eslint --fix` and `npx tsc --noEmit`, so the exact same config
+(`eslint.config.mjs` → `eslint-config-next/core-web-vitals`) is enforced
+everywhere. This replaced Husky + lint-staged (see the "Project note:
+rh-multi-pre-commit" in `security.mdc` and CONTRIBUTING.md for why: Husky's
+`core.hooksPath` conflicts with the corporate `rh-multi-pre-commit`
+secret-scan hook).
+
+Next.js 16 removed the `next lint` command entirely, so `npm run lint` (and
+the pre-commit hook above) call `eslint` directly against `eslint.config.mjs`
+— a flat config that re-exports `eslint-config-next/core-web-vitals`.
+Deliberately not `eslint-config-next/typescript`: this project relies on
+`npm run type-check` for type safety and never opted into the
+`typescript-eslint` recommended ruleset, so adding it now would be an
+unrelated ~100-finding lint-strictness change. `eslint-plugin-react-hooks` is
+pinned to `^5.2.0` via `package.json`'s `overrides` — `eslint-config-next@16`
+bundles `eslint-plugin-react-hooks@^7`, whose new React-Compiler-oriented
+rules (`set-state-in-effect`, `static-components`, etc.) flagged ~30 issues
+across existing components. Those are legitimate findings worth fixing, just
+not as an incidental part of a dependency-version-upgrade commit — revisit
+this pin as a dedicated follow-up.
+
+## Configuration files
+
+- `eslint.config.js` (flat config) or `.eslintrc.*` (legacy) for ESLint.
+- `.prettierrc` or `prettier` key in `package.json` for Prettier.
+- `.jshintrc` for JSHint.
+- `tsconfig.json` for TypeScript compiler options.
+
+## Package security
+
+For Red Hat projects, the `rh-prodsec-npm` local hook checks npm packages against Red Hat Product Security advisories. Add it as a local hook if applicable.

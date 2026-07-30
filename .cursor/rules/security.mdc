@@ -1,0 +1,86 @@
+---
+description: Security scanning rules — secret detection, trojan source, CVE scanning
+alwaysApply: true
+---
+
+# Cross-Cutting: Security
+
+## Secret detection
+
+- **detect-secrets** (Yelp): Scans for hardcoded secrets (API keys, passwords, tokens).
+- Requires a baseline file: `.secrets.baseline`. Generate it once:
+
+```bash
+detect-secrets scan > .secrets.baseline
+```
+
+- Review and audit the baseline periodically: `detect-secrets audit .secrets.baseline`.
+- The `--security` pre-commit snippet includes this hook.
+
+## Trojan Source detection
+
+- Detects dangerous Unicode characters (BIDI overrides, zero-width characters) that can make code appear different from what it actually does.
+- Included as a local hook in the `--security` snippet.
+- Scans all text files.
+
+## OpenSSF Scorecard
+
+- **`--security` implies scorecard**: assembling with `--security` or `--github` auto-includes the OpenSSF Scorecard pre-commit hook (Podman `ghcr.io/ossf/scorecard:v5.5.0`).
+- Script paths: `~/.cursor/pre-commit-templates/scripts/scorecard-{common,local,pre-commit}.sh` (re-copy all three into `<repo>/scripts/` when hook logic changes).
+- Optional: `export GITHUB_AUTH_TOKEN="<fine-grained PAT, contents:read>"` or `export GITLAB_AUTH_TOKEN="glpat-..."` for richer local checks; hook runs without either.
+- Break-glass: `SKIP=scorecard git commit`.
+- Latency: expect ~1–3 min per commit after first container pull.
+- **New-repo bootstrap** (git init does not copy the template config automatically):
+
+```bash
+cp ~/.git-template/.pre-commit-config.yaml .pre-commit-config.yaml
+detect-secrets scan > .secrets.baseline
+pre-commit install
+```
+
+## Language-specific CVE scanning
+
+- **Go**: `govulncheck` scans Go module dependencies. Add via the `lang-go.mdc` guidance.
+- **Python**: `pip-audit` or `safety` can scan Python dependencies. Not yet included as a pre-commit snippet; run manually or in CI.
+- **JavaScript**: `npm audit` or the `rh-prodsec-npm` hook for Red Hat projects.
+
+## Pre-commit hooks
+
+The `--security` flag in `assemble.sh` adds:
+
+- `detect-secrets` with baseline
+- Trojan Source / Unicode detection
+- OpenSSF Scorecard (Podman; auto-included, not a separate snippet file in `ALL_SNIPPETS`)
+- Conventional commits (commented out; opt-in)
+
+```bash
+assemble.sh --base --security [--language and --platform flags]
+```
+
+## Project note: rh-multi-pre-commit (gpu-calc-v2)
+
+`.git/hooks/pre-commit` in this environment is the corporate
+`rh-multi-pre-commit` shim (from `~/.git-template`, installed via
+`init.templatedir`), which always runs a global Red Hat gitleaks secret scan.
+It only *also* runs this repo's `.pre-commit-config.yaml` if local config is
+explicitly enabled:
+
+```bash
+git config rh-pre-commit.enableLocalConfig true
+```
+
+This is a **per-clone, local git config** (not committed) — every
+contributor must run it once after cloning. See CONTRIBUTING.md.
+
+**Do not use Husky (or anything else that sets `core.hooksPath`) in this
+repo.** `core.hooksPath` is an all-or-nothing override: setting it to
+`.husky/_` silently disables the corporate leak-scan hook for that
+contributor, because git stops looking in `.git/hooks/` entirely. This repo
+consolidates all commit-time checks into `.pre-commit-config.yaml` (including
+JS/TS linting — see `lang-javascript.mdc`) for exactly this reason.
+
+## Best practices
+
+- Never commit `.env` files, `credentials.json`, private keys, or tokens.
+- Use environment variables or secret management tools (Vault, GitHub Secrets, GitLab CI Variables).
+- If `detect-secrets` flags a false positive, update the baseline — do not disable the hook.

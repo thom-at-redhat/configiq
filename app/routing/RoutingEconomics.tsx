@@ -380,8 +380,10 @@ export default function RoutingEconomics() {
           <div className={styles.modeToggle}>
             <Switch
               id="cost-mode"
-              label="Cloud"
-              labelOff="Owned"
+              // PF6 removed Switch's labelOff prop (single static `label` only),
+              // so the old "Cloud"/"Owned" toggle-label behavior is recreated
+              // by computing the label from state instead.
+              label={mode === 'cloud' ? 'Cloud' : 'Owned'}
               isChecked={mode === 'cloud'}
               onChange={(_e, checked) => setMode(checked ? 'cloud' : 'owned')}
             />

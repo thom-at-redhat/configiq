@@ -1,0 +1,6 @@
+# CODEOWNERS
+#
+# These owners are requested for review when a PR touches matching files.
+# See https://docs.github.com/articles/about-codeowners
+
+* @thom-at-redhat

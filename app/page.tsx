@@ -2,8 +2,7 @@
 import {
   PageSection,
   Title,
-  Text,
-  TextContent,
+  Content,
   Grid,
   GridItem,
   Card,
@@ -61,24 +60,24 @@ const tools = [
 export default function HomePage() {
   return (
     <>
-      <PageSection variant="light">
+      <PageSection hasBodyWrapper={false}>
         <div style={{ position: 'relative' }}>
           <div style={{ position: 'absolute', top: 0, right: 0, fontSize: '0.875rem', color: '#6A6E73' }}>
             Work in progress
           </div>
-          <TextContent>
+          <Content>
             <Title headingLevel="h1" size="2xl">
               GPU Calc
             </Title>
-            <Text component="p">
+            <Content component="p">
               LLM inference sizing, GPU comparison, and cost modeling for
               engineers and infrastructure teams.
-            </Text>
-          </TextContent>
+            </Content>
+          </Content>
         </div>
       </PageSection>
 
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Grid hasGutter md={6} xl={4}>
           {tools.map((tool) => (
             <GridItem key={tool.href}>
@@ -88,9 +87,9 @@ export default function HomePage() {
                   {tool.title}
                 </CardTitle>
                 <CardBody>
-                  <TextContent>
-                    <Text component="p">{tool.description}</Text>
-                  </TextContent>
+                  <Content>
+                    <Content component="p">{tool.description}</Content>
+                  </Content>
                   <br />
                   <Button
                     variant="link"

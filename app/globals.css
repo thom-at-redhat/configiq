@@ -52,32 +52,39 @@
   --mono:    var(--font-mono);    /* Red Hat Mono */
 
   /* Point PatternFly at our fonts */
-  --pf-v5-global--FontFamily--heading--vf: var(--display);
-  --pf-v5-global--FontFamily--text--vf:    var(--sans);
-  --pf-v5-global--FontFamily--monospace--vf: var(--mono);
-  --pf-v5-global--FontFamily--heading:     var(--display);
-  --pf-v5-global--FontFamily--text:        var(--sans);
-  --pf-v5-global--FontFamily--monospace:   var(--mono);
+  --pf-t--global--font--family--heading: var(--display);
+  --pf-t--global--font--family--body:    var(--sans);
+  --pf-t--global--font--family--mono: var(--mono);
+  --pf-t--global--font--family--heading:     var(--display);
+  --pf-t--global--font--family--body:        var(--sans);
+  --pf-t--global--font--family--mono:   var(--mono);
 
   /* Typography — these are set as CSS variables by next/font in layout.tsx */
   /* Fallbacks here are for non-Next.js contexts only */
 
-  /* Override PatternFly primary color tokens with Red Hat red */
-  --pf-v5-global--primary-color--100:       #ee0000;
-  --pf-v5-global--primary-color--200:       #be0000;
-  --pf-v5-global--primary-color--300:       #a30000;
-  --pf-v5-global--link--Color:              #ee0000;
-  --pf-v5-global--link--Color--hover:       #be0000;
-  --pf-v5-global--active-color--100:        #ee0000;
-  --pf-v5-global--Color--light-100:         #ffffff;
+  /* Override PatternFly primary color tokens with Red Hat red.
+     PF6 replaced the flat v5 primary-color, link--Color, active-color, and
+     Color--light-100 tokens with role-based design tokens. Mapped 1:1 to
+     the alias tokens (not the numbered base tokens) so the override
+     applies consistently across PF6's light/dark theme contexts.
+     The old v5 primary-color--300 (#a30000) and active-color--100
+     (#ee0000) tokens were dropped: neither is consumed anywhere in this
+     codebase, and #a30000 is already available as --rh-red-darker below. */
+  --pf-t--global--color--brand--default:      #ee0000;
+  --pf-t--global--color--brand--hover:        #be0000;
+  --pf-t--global--text--color--link--default: #ee0000;
+  --pf-t--global--text--color--link--hover:   #be0000;
+  --pf-t--global--text--color--inverse:       #ffffff;
 
   /* Masthead: Red Hat brand uses black header bar */
-  --pf-v5-c-masthead--BackgroundColor:      #000000;
+  --pf-v6-c-masthead--BackgroundColor:      #000000;
 
-  /* Nav active indicator */
-  --pf-v5-c-nav__link--m-current--Color:                       #ffffff;
-  --pf-v5-c-nav__link--m-current--after--BackgroundColor:      #ee0000;
-  --pf-v5-c-nav__item--m-current__link--after--BackgroundColor: #ee0000;
+  /* Nav active indicator. PF6 dropped the ::after-based indicator bar in
+     favor of a background-color + border-width on the link itself, so the
+     old --m-current--after--BackgroundColor / --m-current__link--after--*
+     variables no longer exist — both collapse into this one real token. */
+  --pf-v6-c-nav__link--m-current--Color:            #ffffff;
+  --pf-v6-c-nav__link--m-current--BackgroundColor:  #ee0000;
 }
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -100,7 +107,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text);
 }
 
-code, pre, .pf-v5-u-font-family-mono {
+code, pre, .pf-v6-u-font-family-mono {
   font-family: var(--mono) !important;
 }
 
@@ -134,32 +141,32 @@ code, pre, .pf-v5-u-font-family-mono {
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border: 1px solid var(--pf-v5-global--BorderColor--100);
+  border: 1px solid var(--pf-t--global--border--color--default);
   border-radius: 6px;
-  padding: var(--pf-v5-global--spacer--md);
-  background: var(--pf-v5-global--BackgroundColor--100);
+  padding: var(--pf-t--global--spacer--md);
+  background: var(--pf-t--global--background--color--primary--default);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: var(--pf-v5-global--spacer--sm);
+  gap: var(--pf-t--global--spacer--sm);
 }
 
 .rh-flip-card__face--back {
   transform: rotateY(180deg);
-  background: var(--pf-v5-global--BackgroundColor--100);
+  background: var(--pf-t--global--background--color--primary--default);
 }
 
 .rh-flip-card__hint {
   margin-top: auto;
-  padding-top: var(--pf-v5-global--spacer--sm);
-  font-size: var(--pf-v5-global--FontSize--sm);
-  color: var(--pf-v5-global--Color--200);
+  padding-top: var(--pf-t--global--spacer--sm);
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--subtle);
   text-align: right;
 }
 
 /* Selectable card: RH red-50 tint for selected state */
-.pf-v5-c-card.pf-m-selectable.pf-m-selected {
-  --pf-v5-c-card--BackgroundColor: var(--rh-red-50, #ffeaea);
+.pf-v6-c-card.pf-m-selectable.pf-m-selected {
+  --pf-v6-c-card--BackgroundColor: var(--rh-red-50, #ffeaea);
 }
 
 /* Narrow centered layout for form-style pages */
@@ -176,11 +183,14 @@ code, pre, .pf-v5-u-font-family-mono {
 }
 
 /* Button overrides: primary buttons use Red Hat red */
-.pf-v5-c-button.pf-m-primary {
-  --pf-v5-c-button--m-primary--BackgroundColor: #ee0000;
-  --pf-v5-c-button--m-primary--hover--BackgroundColor: #be0000;
-  --pf-v5-c-button--m-primary--active--BackgroundColor: #a30000;
-  --pf-v5-c-button--m-primary--focus--BackgroundColor: #be0000;
+.pf-v6-c-button.pf-m-primary {
+  --pf-v6-c-button--m-primary--BackgroundColor: #ee0000;
+  --pf-v6-c-button--m-primary--hover--BackgroundColor: #be0000;
+  --pf-v6-c-button--m-primary--m-clicked--BackgroundColor: #a30000;
+  /* PF6 renamed the "active" click state to "clicked" and dropped a
+     separate focus-state background-color variable for Button — focus is
+     now indicated via outline/box-shadow instead. No PF6 equivalent exists
+     for the old --pf-v5-c-button--m-primary--focus--BackgroundColor. */
 }
 
 /* ── Top nav ──────────────────────────────────────────────────────────────── */
@@ -282,7 +292,7 @@ code, pre, .pf-v5-u-font-family-mono {
     align-items: stretch;
     gap: 0.75rem;
   }
-  .rh-qe-footer .pf-v5-c-button { width: 100%; justify-content: center; }
+  .rh-qe-footer .pf-v6-c-button { width: 100%; justify-content: center; }
 
   /* Hide version badge to give nav links more room */
   :root { --rh-version-display: none; }

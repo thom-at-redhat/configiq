@@ -1,7 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { Modal, Button, TextInput, FormGroup } from '@patternfly/react-core';
+import {
+	Button,
+	TextInput,
+	FormGroup
+} from '@patternfly/react-core';
+import {
+	Modal
+} from '@patternfly/react-core/deprecated';
 
 interface SaveEstimateModalProps {
   isOpen: boolean;

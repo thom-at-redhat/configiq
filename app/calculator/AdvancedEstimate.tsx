@@ -275,7 +275,7 @@ export default function AdvancedEstimate() {
                   <Label color="blue" isCompact>Fetching...</Label>
                 )}
                 {modelStatus === 'fetched' && (
-                  <Label color="cyan" isCompact icon={<CheckCircleIcon />}>From HuggingFace</Label>
+                  <Label color="teal" isCompact icon={<CheckCircleIcon />}>From HuggingFace</Label>
                 )}
                 {modelStatus === 'error' && (
                   <Label color="red" isCompact icon={<ExclamationTriangleIcon />}>Not found</Label>
@@ -412,17 +412,16 @@ export default function AdvancedEstimate() {
 
             {/* Additional constraints */}
             <Accordion style={{ marginTop: 12 }}>
-              <AccordionItem>
+              <AccordionItem isExpanded={expanded.includes('constraints')}>
                 <AccordionToggle
                   id="constraints-toggle"
                   onClick={() => setExpanded(
                     expanded.includes('constraints') ? expanded.filter(e => e !== 'constraints') : [...expanded, 'constraints']
                   )}
-                  isExpanded={expanded.includes('constraints')}
                 >
                   Additional constraints
                 </AccordionToggle>
-                <AccordionContent isHidden={!expanded.includes('constraints')}>
+                <AccordionContent>
                   <div className={styles.paramGrid} style={{ marginTop: 8 }}>
                     <div>
                       <label className={styles.fieldLabel}>Batch size (optional)</label>
@@ -581,17 +580,16 @@ export default function AdvancedEstimate() {
           {/* ─── Estimated serving performance ─── */}
           <div className={styles.card} style={{ marginBottom: 24 }}>
             <Accordion>
-              <AccordionItem>
+              <AccordionItem isExpanded={expanded.includes('perf')}>
                 <AccordionToggle
                   id="perf-toggle"
                   onClick={() => setExpanded(
                     expanded.includes('perf') ? expanded.filter(e => e !== 'perf') : [...expanded, 'perf']
                   )}
-                  isExpanded={expanded.includes('perf')}
                 >
                   <span style={{ fontWeight: 600 }}>Estimated serving performance</span>
                 </AccordionToggle>
-                <AccordionContent isHidden={!expanded.includes('perf')}>
+                <AccordionContent>
                   <div className={styles.cardBody}>
                     <div className={styles.paramGrid}>
                       <div>
