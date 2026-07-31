@@ -320,7 +320,7 @@ QuickEstimate.tsx
     │
     ├─→ fetchModelConfig (from lib/huggingface/fetch-config.ts)
     │       └─→ live GET of the model's config.json from HuggingFace
-    │           (8s timeout; failure/incompleteness falls back to
+    │           (10s timeout; failure/incompleteness falls back to
     │            model-families.json + name-pattern detection)
     │
     ├─→ computeInferenceConfig (from core.ts)
@@ -401,7 +401,7 @@ early integration and does not reflect a visible UI element anymore.
 │  Quick Estimate Page                                  │
 │                                                       │
 │  1. fetchModelConfig() pulls the live HuggingFace     │
-│     config.json for the selected model (8s timeout,   │
+│     config.json for the selected model (10s timeout,  │
 │     falls back to model-families.json config          │
 │     fallbacks / name-pattern detection on failure)    │
 │                     │                                │
@@ -449,7 +449,7 @@ first-visit product tour.
      └─→ POST /api/v1/config
          │
          ├─→ fetchModelConfig() — server-side HuggingFace config.json fetch
-         │   (8s timeout; non-fatal on failure, engine falls back to estimation)
+         │   (10s timeout; non-fatal on failure, engine falls back to estimation)
          │
          └─→ Call computeInferenceConfig()
              └─→ Returns full inference result
