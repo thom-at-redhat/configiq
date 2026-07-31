@@ -157,7 +157,7 @@ that must be preserved:
 - **Glossary popovers** — every jargon term (KV cache, max_num_seqs, tensor
   parallel, GQA, worst-case context, range drivers, etc.) has a "?" icon with
   plain-language explanation in a popover.
-- **Accordions** — six assumption sections, collapsed by default. Closed rows
+- **Accordions** — five assumption sections, collapsed by default. Closed rows
   MUST show current values inline so users can read state without expanding.
 - **Default-first flow** — show three key numbers immediately (weights, KV/req,
   GPUs) + cost; everything else is collapsed and editable.

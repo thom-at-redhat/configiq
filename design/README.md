@@ -71,7 +71,7 @@ fallbacks in the module render an equivalent clean look:
 - **Glossary popovers** — every jargon term (`KV cache`, `max_num_seqs`,
   `tensor parallel`, `GQA`, `worst-case context`, `range drivers`, …) has a `?`
   with a plain-language explanation. See `GLOSSARY` in `quickEstimateHelpers.tsx`.
-- **Accordions** — six assumption sections, collapsed by default; **each closed
+- **Accordions** — five assumption sections, collapsed by default; **each closed
   row shows its current values** so you can read state without expanding. The
   warning strip's "Customize →" opens the Workload section.
 
