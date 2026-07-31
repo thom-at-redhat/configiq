@@ -9,9 +9,10 @@
   --text-3:     #54585c;   /* lightest allowed — captions only */
 
   /* Interactive */
-  --link:       #0066cc;   /* all links, buttons, interactive */
-  --action:     #0066cc;   /* same as link */
-  --link-hover: #004080;
+  --link:        #0066cc;   /* all links, buttons, interactive */
+  --action:      #0066cc;   /* same as link */
+  --link-hover:  #004080;
+  --link-active: #002850;   /* clicked/pressed state, one step darker than hover */
 
   /* Brand */
   --brand-red:  #ee0000;   /* LOGO ONLY — never text or buttons */
@@ -62,18 +63,17 @@
   /* Typography — these are set as CSS variables by next/font in layout.tsx */
   /* Fallbacks here are for non-Next.js contexts only */
 
-  /* Override PatternFly primary color tokens with Red Hat red.
+  /* Override PatternFly primary color tokens with our interactive blue
+     (--link / --link-hover above) — brand red is LOGO ONLY per CLAUDE.md
+     and must never drive default-styled text or buttons.
      PF6 replaced the flat v5 primary-color, link--Color, active-color, and
      Color--light-100 tokens with role-based design tokens. Mapped 1:1 to
      the alias tokens (not the numbered base tokens) so the override
-     applies consistently across PF6's light/dark theme contexts.
-     The old v5 primary-color--300 (#a30000) and active-color--100
-     (#ee0000) tokens were dropped: neither is consumed anywhere in this
-     codebase, and #a30000 is already available as --rh-red-darker below. */
-  --pf-t--global--color--brand--default:      #ee0000;
-  --pf-t--global--color--brand--hover:        #be0000;
-  --pf-t--global--text--color--link--default: #ee0000;
-  --pf-t--global--text--color--link--hover:   #be0000;
+     applies consistently across PF6's light/dark theme contexts. */
+  --pf-t--global--color--brand--default:      var(--link);
+  --pf-t--global--color--brand--hover:        var(--link-hover);
+  --pf-t--global--text--color--link--default: var(--link);
+  --pf-t--global--text--color--link--hover:   var(--link-hover);
   --pf-t--global--text--color--inverse:       #ffffff;
 
   /* Masthead: Red Hat brand uses black header bar */
@@ -182,11 +182,13 @@ code, pre, .pf-v6-u-font-family-mono {
   }
 }
 
-/* Button overrides: primary buttons use Red Hat red */
+/* Button overrides: primary buttons use the interactive blue, matching
+   --link/--action above. Brand red is LOGO ONLY (see CLAUDE.md) and must
+   never be used for buttons. */
 .pf-v6-c-button.pf-m-primary {
-  --pf-v6-c-button--m-primary--BackgroundColor: #ee0000;
-  --pf-v6-c-button--m-primary--hover--BackgroundColor: #be0000;
-  --pf-v6-c-button--m-primary--m-clicked--BackgroundColor: #a30000;
+  --pf-v6-c-button--m-primary--BackgroundColor: var(--action);
+  --pf-v6-c-button--m-primary--hover--BackgroundColor: var(--link-hover);
+  --pf-v6-c-button--m-primary--m-clicked--BackgroundColor: var(--link-active);
   /* PF6 renamed the "active" click state to "clicked" and dropped a
      separate focus-state background-color variable for Button — focus is
      now indicated via outline/box-shadow instead. No PF6 equivalent exists

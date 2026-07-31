@@ -24,7 +24,7 @@
 
 /* Shared tokens */
 .mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
 }
 
 .ps {
@@ -33,7 +33,7 @@
 }
 
 .pst {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -46,7 +46,7 @@
 }
 
 .chipR {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   color: #ee0000;
@@ -57,7 +57,7 @@
 }
 
 .chipB {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   color: #0066cc;
@@ -68,7 +68,7 @@
 }
 
 .chipG {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   color: #059669;
@@ -199,7 +199,7 @@
   padding: 7px 6px;
   border: 1.5px solid #e0e0e0;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 13px;
   text-align: center;
   background: #fafafa;
@@ -269,7 +269,7 @@
 }
 
 .storLbl {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -281,7 +281,7 @@
   padding: 6px 8px;
   border: 1.5px solid #e0e0e0;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 12px;
   text-align: right;
   background: #fafafa;
@@ -327,7 +327,7 @@
   padding: 7px 8px;
   border: 1.5px solid #e0e0e0;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 12px;
   text-align: right;
   background: #fafafa;
@@ -345,7 +345,7 @@
   padding: 7px 18px 7px 7px;
   border: 1.5px solid #e0e0e0;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   background: #fafafa;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 4 4-4' stroke='%23707070' stroke-width='1.4' fill='none'/%3E%3C/svg%3E");
@@ -379,7 +379,7 @@
 }
 
 .licEquiv {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   color: #a0a0a0;
   margin-top: -4px;
@@ -434,7 +434,7 @@
 }
 
 .licTotal .v {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-weight: 600;
 }
 
@@ -540,7 +540,7 @@
 
 .rateGroup {
   padding: 6px 12px 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -565,7 +565,7 @@
   padding: 5px 6px;
   border: 1.5px solid #e0e0e0;
   border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11.5px;
   text-align: right;
   background: #fafafa;
@@ -585,7 +585,7 @@
 }
 
 .rateU {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   color: #a0a0a0;
 }
@@ -622,7 +622,7 @@
 }
 
 .cpTitle {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -745,7 +745,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 9px;
   font-weight: 700;
   color: #fff;
@@ -763,7 +763,7 @@
 }
 
 .lcVal {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11.5px;
   font-weight: 700;
   white-space: nowrap;
@@ -773,7 +773,7 @@
   position: absolute;
   right: 6px;
   bottom: 2px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-weight: 700;
   font-size: 50px;
   line-height: 1;
@@ -791,7 +791,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   color: #a0a0a0;
 }
@@ -890,7 +890,7 @@
 }
 
 .cmpLbl {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -909,7 +909,7 @@
 }
 
 .cmpNum {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 38px;
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -927,7 +927,7 @@
 }
 
 .cmpSub {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10.5px;
   color: #666;
   margin-top: 7px;
@@ -957,7 +957,7 @@
 }
 
 .costDiffTitle {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: var(--display), system-ui, sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   color: #151515;
@@ -995,7 +995,7 @@
 }
 
 .costDiffVal {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1019,7 +1019,7 @@
 }
 
 .mct th {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1040,7 +1040,7 @@
 }
 
 .mct td:not(:first-child) {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   text-align: right;
 }
 
@@ -1053,7 +1053,7 @@
 }
 
 .mct tr.total td:not(:first-child) {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
 }
 
 /* 5yr bars */
@@ -1064,7 +1064,7 @@
 }
 
 .sectLbl {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1085,7 +1085,7 @@
 }
 
 .fyHdV {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-weight: 600;
   font-size: 12px;
 }
@@ -1141,7 +1141,7 @@
 }
 
 .bkNote {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 9.5px;
   color: #a0a0a0;
   text-align: right;
@@ -1170,7 +1170,7 @@
 }
 
 .mcLbl {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -1189,7 +1189,7 @@
 }
 
 .mcVal {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 22px;
   font-weight: 700;
   line-height: 1;
@@ -1373,7 +1373,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 10px;
   color: #707070;
   white-space: nowrap;
@@ -1448,7 +1448,7 @@
 }
 
 .lrVal {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
   text-align: right;
@@ -1456,7 +1456,7 @@
 }
 
 .lrPct {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--mono);
   font-size: 11.5px;
   color: #707070;
   text-align: right;

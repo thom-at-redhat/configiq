@@ -22,12 +22,9 @@ Wire the real GPU math / HuggingFace fetch behind it later.
    - `@patternfly/react-core`
    - `@patternfly/react-icons`
 3. Render `<QuickEstimate />` from your route. The component is `'use client'`.
-4. Load the fonts (Geist + Geist Mono) in your `layout`/`<head>`:
-   ```html
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-   ```
+4. Load the fonts (Red Hat Display, Red Hat Text, Red Hat Mono). The app loads
+   these via `next/font/google` in `app/layout.tsx` (self-hosted, no runtime
+   `<link>` needed) — see that file for the current setup.
 
 ```tsx
 // app/quick-estimate/page.tsx
@@ -54,8 +51,8 @@ fallbacks in the module render an equivalent clean look:
 - **Legibility first.** No font-size below 11.5px. No text lighter than
   `--gc-text-2` for any label, value, or detail. `--gc-text-3` is reserved for
   one-word captions only.
-- **Type:** Plus Jakarta Sans (titles + big numbers, 600–700; body),
-  JetBrains Mono (numbers, labels, code).
+- **Type:** Red Hat Display (titles + big numbers, 600–700), Red Hat Text
+  (body), Red Hat Mono (numbers, labels, code).
 - **Color:** red `#ee0000` is the logo/brand pop only. Blue `#0066cc` is the
   interactive/primary color. Status uses green/amber/red pips, used sparingly.
 - **Default-first flow:** show three numbers immediately (weights, KV/req, GPUs)

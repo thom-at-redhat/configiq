@@ -12,7 +12,7 @@
   padding: 14px 0;
   background: #f0ab00;
   color: #151515;
-  font-family: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+  font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 0.1em;

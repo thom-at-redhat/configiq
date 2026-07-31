@@ -88,7 +88,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     gap: '10px',
     fontSize: '14.5px',
     fontWeight: 500,
-    fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+    fontFamily: 'var(--sans), system-ui, sans-serif',
     color: isActive ? '#ffffff' : 'rgba(255,255,255,0.85)',
     padding: '9px 16px',
     textDecoration: 'none',
@@ -127,7 +127,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     letterSpacing: '0.08em',
     textTransform: 'uppercase' as const,
     color: 'rgba(255,255,255,0.55)',
-    fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+    fontFamily: 'var(--sans), system-ui, sans-serif',
   };
 
   const sidebar = (

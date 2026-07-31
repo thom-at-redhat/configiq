@@ -127,7 +127,7 @@ function GpuChipSvg() {
       ))}
 
       {/* Center label */}
-      <text x="100" y="105" textAnchor="middle" fontFamily="'JetBrains Mono', monospace"
+      <text x="100" y="105" textAnchor="middle" fontFamily="var(--mono), ui-monospace, monospace"
         fontSize="11" fontWeight="600" fill="rgba(255,255,255,0.5)" letterSpacing="0.08em">
         GPU
       </text>

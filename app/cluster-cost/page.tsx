@@ -785,7 +785,7 @@ export default function ClusterCostPage() {
               </div>
               <div className={`${styles.clusterBody} ${cl.open ? styles.open : ''}`}>
                 <div className={styles.clusterInner}>
-                  <div style={{ marginBottom: 8, fontFamily: 'JetBrains Mono', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
+                  <div style={{ marginBottom: 8, fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
                     GPU node groups
                   </div>
                   {cl.nodeGroups.map((ng, i) => (
@@ -816,7 +816,7 @@ export default function ClusterCostPage() {
                     + Add GPU type
                   </button>
 
-                  <div style={{ marginTop: 12, marginBottom: 6, fontFamily: 'JetBrains Mono', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
+                  <div style={{ marginTop: 12, marginBottom: 6, fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
                     Storage tiers (TB)
                   </div>
                   <div className={styles.storGrid}>
@@ -840,7 +840,7 @@ export default function ClusterCostPage() {
                     ))}
                   </div>
 
-                  <div style={{ marginTop: 12, marginBottom: 5, fontFamily: 'JetBrains Mono', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
+                  <div style={{ marginTop: 12, marginBottom: 5, fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '.08em', color: '#a0a0a0' }}>
                     Egress (TB/mo)
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -879,7 +879,7 @@ export default function ClusterCostPage() {
                 </span>
               )}
             </span>
-            <span style={{ color: '#a0a0a0', fontSize: 11, fontFamily: 'JetBrains Mono' }}>{providerOpen ? '▲' : '▼'}</span>
+            <span style={{ color: '#a0a0a0', fontSize: 11, fontFamily: 'var(--mono), ui-monospace, monospace' }}>{providerOpen ? '▲' : '▼'}</span>
           </div>
           {providerOpen && (
             <div style={{ marginTop: 12 }}>
@@ -910,7 +910,7 @@ export default function ClusterCostPage() {
                       border: 'none',
                       cursor: 'pointer',
                       padding: '2px 6px',
-                      fontFamily: 'JetBrains Mono',
+                      fontFamily: 'var(--mono), ui-monospace, monospace',
                       textDecoration: 'underline'
                     }}
                   >
@@ -994,7 +994,7 @@ export default function ClusterCostPage() {
                                     border: hasOverride ? '1.5px solid #0066cc' : '1px solid #e0e0e0',
                                     borderRadius: 3,
                                     background: hasOverride ? '#f0f9ff' : '#fff',
-                                    fontFamily: 'JetBrains Mono',
+                                    fontFamily: 'var(--mono), ui-monospace, monospace',
                                   }}
                                 />
                               </td>
@@ -1038,7 +1038,7 @@ export default function ClusterCostPage() {
                   >
                     + add provider
                   </button>
-                  <div style={{ fontSize: 10, color: '#8a8a8a', marginTop: 8, fontFamily: 'JetBrains Mono' }}>
+                  <div style={{ fontSize: 10, color: '#8a8a8a', marginTop: 8, fontFamily: 'var(--mono), ui-monospace, monospace' }}>
                     Last updated: {new Date().toLocaleTimeString()}
                   </div>
                 </>
@@ -1161,7 +1161,7 @@ export default function ClusterCostPage() {
           <div className={styles.ratesAcc}>
             <div className={styles.ratesHdr} onClick={() => setRatesOpen(o => !o)}>
               <span>⚙ Override cost rates</span>
-              <span style={{ color: '#a0a0a0', fontSize: 11, fontFamily: 'JetBrains Mono' }}>{ratesOpen ? '▲' : '▼'}</span>
+              <span style={{ color: '#a0a0a0', fontSize: 11, fontFamily: 'var(--mono), ui-monospace, monospace' }}>{ratesOpen ? '▲' : '▼'}</span>
             </div>
             <div className={`${styles.ratesBody} ${ratesOpen ? styles.open : ''}`}>
               <div className={styles.rateGroup}>☁ Cloud other rates</div>
@@ -1246,7 +1246,7 @@ export default function ClusterCostPage() {
             <div className={styles.stackCol}>
               <div className={`${styles.stackHdr} ${styles.cloud}`}>
                 ☁ <span>Cloud ({activeProvider?.label || 'Cloud'})</span>
-                <span style={{ marginLeft: 'auto', fontFamily: 'JetBrains Mono', fontSize: 11, opacity: 0.7 }}>
+                <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 11, opacity: 0.7 }}>
                   ${Math.round(cloud.total / 1000)}K/mo
                 </span>
               </div>
@@ -1257,7 +1257,7 @@ export default function ClusterCostPage() {
             <div className={styles.stackCol}>
               <div className={`${styles.stackHdr} ${styles.onprem}`}>
                 🖥 <span>Self-hosted</span>
-                <span style={{ marginLeft: 'auto', fontFamily: 'JetBrains Mono', fontSize: 11, opacity: 0.7 }}>
+                <span style={{ marginLeft: 'auto', fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 11, opacity: 0.7 }}>
                   ${Math.round(onprem.total / 1000)}K/mo
                 </span>
               </div>
@@ -1292,7 +1292,7 @@ export default function ClusterCostPage() {
 
         {/* Hero */}
         <div className={styles.hero}>
-          <div style={{ fontFamily: 'JetBrains Mono', fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', color: '#555', marginBottom: 10 }}>
+          <div style={{ fontFamily: 'var(--mono), ui-monospace, monospace', fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', color: '#555', marginBottom: 10 }}>
             Monthly cost{dr ? ' · DR included' : ''}
           </div>
           <div className={styles.cmpGrid}>
@@ -1382,7 +1382,7 @@ export default function ClusterCostPage() {
                     <tr key={cl.id}>
                       <td>{cl.name}</td>
                       <td>
-                        <span style={{ fontFamily: 'JetBrains Mono' }}>{gpus}</span>
+                        <span style={{ fontFamily: 'var(--mono), ui-monospace, monospace' }}>{gpus}</span>
                       </td>
                       <td>${Math.round(cCloud / 1000)}K</td>
                       <td>${Math.round(cOp / 1000)}K</td>
@@ -1392,7 +1392,7 @@ export default function ClusterCostPage() {
                 <tr className={styles.total}>
                   <td>Grand total</td>
                   <td>
-                    <span style={{ fontFamily: 'JetBrains Mono' }}>{totalGPUs}</span>
+                    <span style={{ fontFamily: 'var(--mono), ui-monospace, monospace' }}>{totalGPUs}</span>
                   </td>
                   <td style={{ color: '#0066cc' }}>${Math.round(cloud.total / 1000)}K</td>
                   <td style={{ color: '#10b981' }}>${Math.round(onprem.total / 1000)}K</td>

@@ -88,7 +88,7 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-family: var(--sans), system-ui, sans-serif;
   color: #8a8d90;
   transition: color 300ms ease, opacity 300ms ease;
 }
@@ -142,7 +142,7 @@
 
 /* ---------- Timer ---------- */
 .timer {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: var(--mono), ui-monospace, monospace;
   font-size: 13px;
   color: #6a6e73;
   letter-spacing: 0.02em;

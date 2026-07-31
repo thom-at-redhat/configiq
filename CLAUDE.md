@@ -16,7 +16,7 @@ at nb-qbits.github.io/gpu-calc.
 - **Charts**: hand-rolled inline SVG (e.g. `app/gpu-explorer/GpuBubbleChart.tsx`) —
   `@patternfly/react-charts` was a declared but entirely unused dependency and
   was removed during the PatternFly v6 migration
-- **Fonts**: Plus Jakarta Sans (display, body), JetBrains Mono (numbers, technical labels)
+- **Fonts**: Red Hat Display (display, headings), Red Hat Text (body), Red Hat Mono (numbers, technical labels)
 - **Deployment**: Vercel
 
 ## Documentation

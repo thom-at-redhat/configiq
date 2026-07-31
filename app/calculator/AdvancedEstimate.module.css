@@ -16,9 +16,10 @@
   --red:  var(--gc-red, #ee0000);
   --ok: var(--gc-success, #3d7317);
 
-  --display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
+  /* --display/--sans/--mono come from the global :root in app/globals.css
+     (Red Hat Display/Text/Mono, wired via next/font in layout.tsx) — do not
+     redeclare them here, it would shadow the real fonts app-wide within
+     this page. */
   --radius: 6px;
 
   font-family: var(--sans);
