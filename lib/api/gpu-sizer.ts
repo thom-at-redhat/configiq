@@ -80,6 +80,14 @@ export async function callGpuSizer(
     return makeError(requestId, 'GPU_SIZER_NOT_CONFIGURED', 'GPU sizing service is not configured')
   }
 
+  if (isInsecureUrl(url)) {
+    return makeError(
+      requestId,
+      'GPU_SIZER_INSECURE_URL',
+      'GPU_SIZER_URL must use https:// (plaintext http:// is only allowed for localhost/127.0.0.1)'
+    )
+  }
+
   const externalPayload: Record<string, unknown> = {
     model_path: request.model_path,
     system: request.system,
@@ -210,6 +218,23 @@ export async function callGpuSizer(
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1'])
+
+/**
+ * True if `url` is plaintext http:// and not pointed at a local-dev host.
+ * Malformed URLs are not flagged here — they'll surface their own error
+ * when fetch() attempts to use them.
+ */
+function isInsecureUrl(url: string): boolean {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+  return parsed.protocol === 'http:' && !LOCAL_HOSTNAMES.has(parsed.hostname)
+}
 
 function makeError(requestId: string, code: string, message: string): GpuSizerErrorResponse {
   return { requestId, status: 'failed', error: { code, message } }

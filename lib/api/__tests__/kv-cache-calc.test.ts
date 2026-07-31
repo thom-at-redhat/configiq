@@ -111,7 +111,7 @@ describe('callKvCacheCalc', () => {
   beforeEach(() => {
     vi.stubEnv('AICONFIGURATOR_USERNAME', 'test-user')
     vi.stubEnv('AICONFIGURATOR_PASSWORD', 'test-pass')
-    vi.stubEnv('AICONFIGURATOR_API_URL', 'http://fake-aiconfigurator:7860')
+    vi.stubEnv('AICONFIGURATOR_API_URL', 'https://fake-aiconfigurator:7860')
   })
 
   afterEach(() => {
@@ -217,7 +217,7 @@ describe('callKvCacheCalc', () => {
 
     await callKvCacheCalc(VALID_REQUEST)
 
-    expect(mockFetch.mock.calls[0][0]).toBe('http://fake-aiconfigurator:7860/kv_cache_calc')
+    expect(mockFetch.mock.calls[0][0]).toBe('https://fake-aiconfigurator:7860/kv_cache_calc')
   })
 
   it('never returns credentials in the response', async () => {
@@ -258,6 +258,28 @@ describe('callKvCacheCalc', () => {
 
     expect(result.status).toBe('failed')
     expect((result as KvCacheCalcErrorResponse).error.code).toBe('KV_CACHE_NOT_CONFIGURED')
+  })
+
+  it('returns KV_CACHE_INSECURE_URL when URL is plaintext http:// on a non-local host', async () => {
+    vi.stubEnv('AICONFIGURATOR_API_URL', 'http://fake-aiconfigurator:7860')
+    vi.stubGlobal('fetch', mockFetchOk(EXTERNAL_RESPONSE))
+
+    const result = await callKvCacheCalc(VALID_REQUEST)
+
+    expect(result.status).toBe('failed')
+    expect((result as KvCacheCalcErrorResponse).error.code).toBe('KV_CACHE_INSECURE_URL')
+  })
+
+  it('allows plaintext http:// for localhost and 127.0.0.1', async () => {
+    vi.stubGlobal('fetch', mockFetchOk(EXTERNAL_RESPONSE))
+
+    vi.stubEnv('AICONFIGURATOR_API_URL', 'http://localhost:7860')
+    const localhostResult = await callKvCacheCalc(VALID_REQUEST)
+    expect(localhostResult.status).toBe('completed')
+
+    vi.stubEnv('AICONFIGURATOR_API_URL', 'http://127.0.0.1:7860')
+    const loopbackResult = await callKvCacheCalc(VALID_REQUEST)
+    expect(loopbackResult.status).toBe('completed')
   })
 
   it('returns KV_CACHE_TIMEOUT on fetch timeout', async () => {

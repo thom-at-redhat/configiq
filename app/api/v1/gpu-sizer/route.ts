@@ -5,6 +5,7 @@ import { callGpuSizer, generateRequestId } from '@/lib/api/gpu-sizer'
 const ERROR_STATUS_MAP: Record<string, number> = {
   INVALID_REQUEST: 400,
   GPU_SIZER_NOT_CONFIGURED: 503,
+  GPU_SIZER_INSECURE_URL: 503,
   GPU_SIZER_AUTH_FAILED: 502,
   GPU_SIZER_UNAVAILABLE: 502,
   GPU_SIZER_TIMEOUT: 504,

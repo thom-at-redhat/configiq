@@ -119,7 +119,7 @@ describe('callGpuSizer', () => {
   beforeEach(() => {
     vi.stubEnv('GPU_SIZER_USERNAME', 'test-user')
     vi.stubEnv('GPU_SIZER_PASSWORD', 'test-pass')
-    vi.stubEnv('GPU_SIZER_URL', 'http://fake-gpu-sizer:7860/gpu_sizer')
+    vi.stubEnv('GPU_SIZER_URL', 'https://fake-gpu-sizer:7860/gpu_sizer')
   })
 
   afterEach(() => {
@@ -228,6 +228,28 @@ describe('callGpuSizer', () => {
 
     expect(result.status).toBe('failed')
     expect((result as GpuSizerErrorResponse).error.code).toBe('GPU_SIZER_NOT_CONFIGURED')
+  })
+
+  it('returns GPU_SIZER_INSECURE_URL when URL is plaintext http:// on a non-local host', async () => {
+    vi.stubEnv('GPU_SIZER_URL', 'http://fake-gpu-sizer:7860/gpu_sizer')
+    vi.stubGlobal('fetch', mockFetchOk(EXTERNAL_RESPONSE))
+
+    const result = await callGpuSizer(VALID_REQUEST)
+
+    expect(result.status).toBe('failed')
+    expect((result as GpuSizerErrorResponse).error.code).toBe('GPU_SIZER_INSECURE_URL')
+  })
+
+  it('allows plaintext http:// for localhost and 127.0.0.1', async () => {
+    vi.stubGlobal('fetch', mockFetchOk(EXTERNAL_RESPONSE))
+
+    vi.stubEnv('GPU_SIZER_URL', 'http://localhost:7860/gpu_sizer')
+    const localhostResult = await callGpuSizer(VALID_REQUEST)
+    expect(localhostResult.status).toBe('completed')
+
+    vi.stubEnv('GPU_SIZER_URL', 'http://127.0.0.1:7860/gpu_sizer')
+    const loopbackResult = await callGpuSizer(VALID_REQUEST)
+    expect(loopbackResult.status).toBe('completed')
   })
 
   it('returns GPU_SIZER_TIMEOUT on fetch timeout', async () => {

@@ -73,6 +73,14 @@ export async function callKvCacheCalc(
     return makeError(requestId, 'KV_CACHE_NOT_CONFIGURED', 'KV cache calculator service is not configured')
   }
 
+  if (isInsecureUrl(baseUrl)) {
+    return makeError(
+      requestId,
+      'KV_CACHE_INSECURE_URL',
+      'AICONFIGURATOR_API_URL must use https:// (plaintext http:// is only allowed for localhost/127.0.0.1)'
+    )
+  }
+
   const externalPayload: Record<string, unknown> = {
     model_path: request.model_path,
     backend: request.backend,
@@ -181,6 +189,23 @@ export async function callKvCacheCalc(
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const LOCAL_HOSTNAMES = new Set(['localhost', '127.0.0.1'])
+
+/**
+ * True if `url` is plaintext http:// and not pointed at a local-dev host.
+ * Malformed URLs are not flagged here — they'll surface their own error
+ * when fetch() attempts to use them.
+ */
+function isInsecureUrl(url: string): boolean {
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+  return parsed.protocol === 'http:' && !LOCAL_HOSTNAMES.has(parsed.hostname)
+}
 
 function makeError(requestId: string, code: string, message: string): KvCacheCalcErrorResponse {
   return { requestId, status: 'failed', error: { code, message } }

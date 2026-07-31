@@ -5,6 +5,7 @@ import { callKvCacheCalc, generateKvRequestId } from '@/lib/api/kv-cache-calc'
 const ERROR_STATUS_MAP: Record<string, number> = {
   INVALID_REQUEST: 400,
   KV_CACHE_NOT_CONFIGURED: 503,
+  KV_CACHE_INSECURE_URL: 503,
   KV_CACHE_AUTH_FAILED: 502,
   KV_CACHE_UNAVAILABLE: 502,
   KV_CACHE_TIMEOUT: 504,
