@@ -52,6 +52,9 @@ const BACKEND_DEFAULTS = {
   licenses: [] as Array<{ name: string; amount: number; cycle: 'yr' | 'mo' }>,
 }
 
+type RatesState = typeof BACKEND_DEFAULTS
+type RateSide = 'cloud' | 'onprem'
+
 // Layer metadata
 const LAYER_META: Record<string, { c: string; label: string; order: number }> = {
   gpu:      { c: '#ee0000', label: 'GPU Compute',   order: 0 },
@@ -446,7 +449,7 @@ export default function ClusterCostPage() {
   const [viewMode, setViewMode] = useState<'cloud' | 'onprem' | 'both'>('cloud')
   const [load, setLoad] = useState(75)
   const [ratesOpen, setRatesOpen] = useState(false)
-  const [rates, setRates] = useState(JSON.parse(JSON.stringify(BACKEND_DEFAULTS)))
+  const [rates, setRates] = useState<RatesState>(() => JSON.parse(JSON.stringify(BACKEND_DEFAULTS)))
   const [toast, setToast] = useState<string | null>(null)
 
   // Cloud provider pricing state
@@ -604,7 +607,7 @@ export default function ClusterCostPage() {
 
   const removeCluster = (id: number) => setClusters(cs => (cs.length > 1 ? cs.filter(c => c.id !== id) : cs))
 
-  const upNG = (cid: number, i: number, k: keyof Cluster['nodeGroups'][0], v: any) =>
+  const upNG = (cid: number, i: number, k: keyof Cluster['nodeGroups'][0], v: string | number) =>
     upCluster(cid, c => {
       const ngs = [...c.nodeGroups]
       ngs[i] = { ...ngs[i], [k]: v }
@@ -621,16 +624,26 @@ export default function ClusterCostPage() {
     }))
 
   const addLicense = () => setLicenses(ls => [...ls, { id: Date.now(), name: '', amount: 0, cycle: 'yr', scope: 'both' }])
-  const upLic = (id: number, k: keyof License, v: any) => setLicenses(ls => ls.map(l => (l.id === id ? { ...l, [k]: v } : l)))
+  const upLic = (id: number, k: keyof License, v: License[keyof License]) =>
+    setLicenses(ls => ls.map(l => (l.id === id ? { ...l, [k]: v } : l)))
   const rmLic = (id: number) => setLicenses(ls => ls.filter(l => l.id !== id))
 
-  const upRate = (side: 'cloud' | 'onprem', k: string, v: number) =>
-    setRates((r: any) => ({ ...r, [side]: { ...r[side], [k]: v } }))
+  const upRate = (side: RateSide, k: string, v: number) =>
+    setRates(r =>
+      side === 'cloud'
+        ? { ...r, cloud: { ...r.cloud, [k]: v } }
+        : { ...r, onprem: { ...r.onprem, [k]: v } }
+    )
 
-  const isOv = (side: 'cloud' | 'onprem', k: string) => (rates as any)[side][k] !== (BACKEND_DEFAULTS as any)[side][k]
+  const isOv = (side: RateSide, k: string) =>
+    (rates[side] as Record<string, number>)[k] !== (BACKEND_DEFAULTS[side] as Record<string, number>)[k]
 
-  const rstRate = (side: 'cloud' | 'onprem', k: string) =>
-    setRates((r: any) => ({ ...r, [side]: { ...r[side], [k]: (BACKEND_DEFAULTS as any)[side][k] } }))
+  const rstRate = (side: RateSide, k: string) =>
+    setRates(r =>
+      side === 'cloud'
+        ? { ...r, cloud: { ...r.cloud, [k]: (BACKEND_DEFAULTS.cloud as Record<string, number>)[k] } }
+        : { ...r, onprem: { ...r.onprem, [k]: (BACKEND_DEFAULTS.onprem as Record<string, number>)[k] } }
+    )
 
   const capStatus =
     load < 50
@@ -708,7 +721,7 @@ export default function ClusterCostPage() {
     showToast('✓ Copied — paste into Google Sheets')
   }
 
-  const CLOUD_RATES = [
+  const CLOUD_RATES: Array<[keyof RatesState['cloud'], string, string]> = [
     ['storHot', 'Hot storage', '$/TB/mo'],
     ['storWarm', 'Warm storage', '$/TB/mo'],
     ['storCold', 'Cold storage', '$/TB/mo'],
@@ -717,7 +730,7 @@ export default function ClusterCostPage() {
     ['supFrac', 'Support', 'fraction'],
   ]
 
-  const ONPREM_RATES = [
+  const ONPREM_RATES: Array<[keyof RatesState['onprem'], string, string]> = [
     ['deprYrs', 'Depreciation', 'yrs'],
     ['powerKwh', 'Power rate', '$/kWh'],
     ['pue', 'PUE', '×'],
@@ -1171,7 +1184,7 @@ export default function ClusterCostPage() {
                   <input
                     className={`${styles.rateIn} ${isOv('cloud', k) ? styles.ov : ''}`}
                     type="number"
-                    value={(rates as any).cloud[k]}
+                    value={rates.cloud[k]}
                     onChange={e => upRate('cloud', k, parseFloat(e.target.value) || 0)}
                   />
                   <span className={styles.rateU}>{unit}</span>
@@ -1198,7 +1211,7 @@ export default function ClusterCostPage() {
                   <input
                     className={`${styles.rateIn} ${isOv('onprem', k) ? styles.ov : ''}`}
                     type="number"
-                    value={(rates as any).onprem[k]}
+                    value={rates.onprem[k]}
                     onChange={e => upRate('onprem', k, parseFloat(e.target.value) || 0)}
                   />
                   <span className={styles.rateU}>{unit}</span>

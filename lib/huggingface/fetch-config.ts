@@ -44,8 +44,9 @@ export interface HFModelConfig {
   tie_word_embeddings?: boolean
   torch_dtype?: string
 
-  // Catch-all for unknown fields
-  [key: string]: any
+  // Catch-all for unknown fields. Raw HF config.json values are arbitrary
+  // JSON (nested objects, arrays, primitives) — callers must narrow before use.
+  [key: string]: unknown
 }
 
 export interface FetchResult {
@@ -217,7 +218,7 @@ export async function fetchModelConfig(
  */
 export function extractParamCount(config: HFModelConfig): number {
   // Some configs have explicit parameter count
-  if (config.num_parameters) {
+  if (typeof config.num_parameters === 'number' && config.num_parameters > 0) {
     return config.num_parameters
   }
 

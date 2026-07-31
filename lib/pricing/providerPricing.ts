@@ -154,42 +154,48 @@ export async function fetchAllProviders(): Promise<Provider[]> {
 /**
  * Parse worker response - adapts to actual shape returned
  */
-function parseWorkerResponse(data: any): Provider[] {
+function parseWorkerResponse(data: unknown): Provider[] {
   // Try common response shapes
   if (Array.isArray(data)) {
     return data as Provider[]
   }
 
-  if (data.providers && Array.isArray(data.providers)) {
-    return data.providers as Provider[]
+  if (typeof data !== 'object' || data === null) {
+    return []
   }
 
-  if (data.data && Array.isArray(data.data)) {
-    return data.data as Provider[]
+  const obj = data as Record<string, unknown>
+
+  if (Array.isArray(obj.providers)) {
+    return obj.providers as Provider[]
   }
 
-  if (data.data && data.data.providers && Array.isArray(data.data.providers)) {
-    return data.data.providers as Provider[]
+  if (Array.isArray(obj.data)) {
+    return obj.data as Provider[]
+  }
+
+  if (typeof obj.data === 'object' && obj.data !== null) {
+    const nestedProviders = (obj.data as Record<string, unknown>).providers
+    if (Array.isArray(nestedProviders)) {
+      return nestedProviders as Provider[]
+    }
   }
 
   console.warn('[Pricing] Unknown response shape, trying to extract providers')
 
   // If it's an object with provider-like keys, try to parse it
-  if (typeof data === 'object' && data !== null) {
-    const providers: Provider[] = []
-    for (const [key, value] of Object.entries(data)) {
-      if (typeof value === 'object' && value !== null && 'gpus' in value) {
-        providers.push({
-          id: key,
-          label: (value as any).label || key,
-          gpus: (value as any).gpus || [],
-        })
-      }
+  const providers: Provider[] = []
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value !== null && 'gpus' in value) {
+      const entry = value as Record<string, unknown>
+      providers.push({
+        id: key,
+        label: typeof entry.label === 'string' ? entry.label : key,
+        gpus: Array.isArray(entry.gpus) ? (entry.gpus as ProviderGpu[]) : [],
+      })
     }
-    if (providers.length > 0) return providers
   }
-
-  return []
+  return providers
 }
 
 /**

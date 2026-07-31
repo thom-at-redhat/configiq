@@ -47,12 +47,16 @@ export function detectKVCategory(
   }
 
   // ── SSM signals ───────────────────────────────────────────────────────────
+  // Note: Nemotron-H's raw config field is `ssm_state_size`, but ExtractedConfig
+  // has no such property — kv-config.ts's extractConfig() already folds it into
+  // `mamba_d_state` as a Nemotron alias, so checking cfg.mamba_d_state below
+  // covers this case. (Previously this also checked `(cfg as any).ssm_state_size`,
+  // which was always undefined on ExtractedConfig and therefore dead.)
   const ssmSignal =
     cfg.mamba_d_state != null ||
     cfg.mamba_d_conv  != null ||
     cfg.mamba_expand  != null ||
-    cfg.ssm_cfg       != null ||
-    (cfg as any).ssm_state_size != null  // Nemotron-H uses this field
+    cfg.ssm_cfg       != null
 
   const attnSignal =
     cfg.H_q != null && (

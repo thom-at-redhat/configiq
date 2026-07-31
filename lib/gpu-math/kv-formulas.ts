@@ -260,7 +260,13 @@ export function computeKVCacheResult(
 
 function effectiveSeqLen(seqLen: number, cfg: ExtractedConfig, deploy: DeploymentParams): number {
   if (!cfg.is_multimodal) return seqLen
-  const imgTokens = 0 * (cfg.mm_tokens_per_image ?? 0) // num_images not in deploy for now
+  // Interim assumption: assume exactly 1 image per request. There is no
+  // `num_images` field in DeploymentParams (or UI support for it) yet, so we
+  // can't scale by an actual image count. Counting a single image's worth of
+  // tokens is still strictly more accurate than the previous behavior, which
+  // multiplied by 0 and always dropped image tokens entirely for multimodal
+  // models. Revisit once num_images is threaded through the UI/type system.
+  const imgTokens = 1 * (cfg.mm_tokens_per_image ?? 0)
   return seqLen + imgTokens
 }
 
