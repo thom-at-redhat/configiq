@@ -35,6 +35,45 @@ npm run dev
 
 App runs at **http://localhost:3000**.
 
+### Environment variables
+
+Copy `.env.example` to `.env.local` and fill in the values below. None of these
+have hardcoded fallbacks — if a required var is missing, the corresponding
+feature fails closed (see "What breaks" column) rather than silently using a
+default host or allowing public access.
+
+> **Heads up if you're deploying this branch:** `GPU_SIZER_URL` and
+> `AICONFIGURATOR_API_URL` used to fall back to a hardcoded internal IP, and
+> `/pricing-admin.html` used to have no auth gate at all. Both of those
+> fallbacks are gone. Set the vars below in your deployment environment
+> **before or during** the deploy — otherwise the GPU Sizer / KV cache calc
+> APIs return "not configured" errors and the pricing admin page returns a
+> 503 until they're set.
+
+| Variable | Required? | Default | What breaks if missing/misconfigured |
+|---|---|---|---|
+| `GPU_SIZER_URL` | Yes, for `/api/v1/gpu-sizer` | none | `POST /api/v1/gpu-sizer` returns `GPU_SIZER_NOT_CONFIGURED` (HTTP 503) |
+| `GPU_SIZER_USERNAME` | Yes, for `/api/v1/gpu-sizer` | none | Same as above (`GPU_SIZER_NOT_CONFIGURED`, HTTP 503) |
+| `GPU_SIZER_PASSWORD` | Yes, for `/api/v1/gpu-sizer` | none | Same as above (`GPU_SIZER_NOT_CONFIGURED`, HTTP 503) |
+| `GPU_SIZER_TIMEOUT_SECONDS` | No | `90` | N/A — falls back to the default timeout |
+| `AICONFIGURATOR_API_URL` | Yes, for `/api/v1/kv-cache-calc` | none | `POST /api/v1/kv-cache-calc` returns `KV_CACHE_NOT_CONFIGURED` (HTTP 503) |
+| `AICONFIGURATOR_USERNAME` | Yes, for `/api/v1/kv-cache-calc` | none | Same as above (`KV_CACHE_NOT_CONFIGURED`, HTTP 503) |
+| `AICONFIGURATOR_PASSWORD` | Yes, for `/api/v1/kv-cache-calc` | none | Same as above (`KV_CACHE_NOT_CONFIGURED`, HTTP 503) |
+| `AICONFIGURATOR_TIMEOUT_SECONDS` | No | `90` | N/A — falls back to the default timeout |
+| `PRICING_ADMIN_USERNAME` | Yes, for `/pricing-admin.html` | none | `/pricing-admin.html` returns HTTP 503 ("Pricing admin is not configured") for everyone, admin included |
+| `PRICING_ADMIN_PASSWORD` | Yes, for `/pricing-admin.html` | none | Same as above (HTTP 503) |
+
+**HTTPS is required.** `GPU_SIZER_URL` and `AICONFIGURATOR_API_URL` must use
+`https://` — plaintext `http://` is only accepted when the host is
+`localhost` or `127.0.0.1` (local dev). A non-local `http://` URL is rejected
+with `GPU_SIZER_INSECURE_URL` / `KV_CACHE_INSECURE_URL` (HTTP 503) instead of
+being sent in plaintext.
+
+`PRICING_ADMIN_USERNAME` / `PRICING_ADMIN_PASSWORD` gate `/pricing-admin.html`
+with HTTP Basic Auth via `middleware.ts`. They're independent of the admin
+token the page itself uses to talk to the Cloudflare Worker — see
+[Pricing Admin](#pricing-admin) below.
+
 ### Available commands
 
 ```bash
@@ -84,7 +123,7 @@ docs/                 Architecture docs and ADRs
 
 The Pricing Admin dashboard (`/pricing-admin.html`) is a standalone tool for managing GPU cloud and API token pricing data sourced via a Cloudflare Worker.
 
-**Access:** Requires a Cloudflare Worker URL and an admin token to connect.
+**Access:** Gated behind HTTP Basic Auth at the middleware level (`PRICING_ADMIN_USERNAME` / `PRICING_ADMIN_PASSWORD` — see [Environment variables](#environment-variables)), fails closed with HTTP 503 if unset. Once past that gate, the page itself also needs a Cloudflare Worker URL and an admin token to connect to the pricing data source.
 
 **Capabilities:**
 
