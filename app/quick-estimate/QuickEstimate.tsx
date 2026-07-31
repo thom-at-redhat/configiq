@@ -457,6 +457,53 @@ export default function QuickEstimate() {
   const kv = useCountUp(realKVPerReqMB);
   const cost = useCountUp(realMonthlyCost);
 
+  // GPUs-required sparkline: sample GPU count across a range of concurrency
+  // values around the current setting. computeInferenceConfig is a pure,
+  // synchronous, client-side function, so this is cheap to run a few extra
+  // times without a network round-trip.
+  const gpuSparklinePoints = React.useMemo<[number, number][]>(() => {
+    if (isFetchingConfig) return [];
+
+    const catalogGpuId = mapGpuToCatalogId(gpu);
+    const multipliers = [0.25, 0.5, 0.75, 1, 1.5, 2, 3];
+    const seenUsers = new Set<number>();
+    const points: [number, number][] = [];
+
+    for (const multiplier of multipliers) {
+      const users = Math.max(1, Math.round(testConcurrentUsers * multiplier));
+      if (seenUsers.has(users)) continue;
+      seenUsers.add(users);
+
+      try {
+        const sample = computeInferenceConfig({
+          model_name: model,
+          precision: testWeightPrecision,
+          kv_cache_precision: testKVCachePrecision,
+          gpu_type: catalogGpuId,
+          concurrent_users: users,
+          isl: testISL,
+          osl: testOSL,
+          workload_type: testWorkloadType,
+          sla_priority: testSLAPriority,
+          hf_config: hfConfig || undefined,
+          manual_tp_size: parallelismOverride && parallelismManualTP !== null ? parallelismManualTP : undefined,
+          manual_replicas: parallelismOverride && parallelismManualReplicas !== null ? parallelismManualReplicas : undefined,
+          manual_max_num_seqs: vllmOverride && vllmManualMaxNumSeqs !== null ? vllmManualMaxNumSeqs : undefined,
+          manual_max_model_len: vllmOverride && vllmManualMaxModelLen !== null ? vllmManualMaxModelLen : undefined,
+          manual_enable_chunked_prefill: vllmOverride && vllmManualChunkedPrefill !== null ? vllmManualChunkedPrefill : undefined,
+          manual_enable_prefix_caching: vllmOverride && vllmManualPrefixCaching !== null ? vllmManualPrefixCaching : undefined,
+          manual_gpu_memory_utilization: vllmOverride && vllmManualGpuUtil !== null ? vllmManualGpuUtil / 100 : undefined,
+        });
+        points.push([users, sample.memory_analysis.tp_size * sample.memory_analysis.replicas]);
+      } catch {
+        // Skip sample points that fail validation (shouldn't happen for positive
+        // concurrency values, but the sparkline is decorative — fail soft).
+      }
+    }
+
+    return points.sort((a, b) => a[0] - b[0]);
+  }, [model, gpu, testConcurrentUsers, testISL, testOSL, testWorkloadType, testSLAPriority, testWeightPrecision, testKVCachePrecision, hfConfig, isFetchingConfig, parallelismOverride, parallelismManualTP, parallelismManualReplicas, vllmOverride, vllmManualMaxNumSeqs, vllmManualMaxModelLen, vllmManualChunkedPrefill, vllmManualPrefixCaching, vllmManualGpuUtil]);
+
   const handleTourComplete = () => {
     setShowTour(false);
     setTourSeen(true);
@@ -1192,6 +1239,11 @@ export default function QuickEstimate() {
         <div className={!matchesSearch('gpus required gpu count hardware h100 servers') ? styles.dimmed : ''} data-tour="result-tile-gpus">
           <FlipTile
             dark
+            sparkline={
+              gpuSparklinePoints.length > 1 ? (
+                <Sparkline points={gpuSparklinePoints} currentX={testConcurrentUsers} />
+              ) : undefined
+            }
           front={
             <>
               <span className={styles.tileLabel}><MicrochipIcon /> GPUs required</span>
