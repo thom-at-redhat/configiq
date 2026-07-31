@@ -30,7 +30,7 @@ This document provides comprehensive component diagrams, data flow visualization
 │  │  - Model input       │        │ - FlipTile           │     │
 │  │  - GPU selector      │        │ - Term (glossary)    │     │
 │  │  - Result tiles      │        └──────────────────────┘     │
-│  │  - Test panel 🧪     │                                      │
+│  │  - Live pricing      │                                      │
 │  └──────────┬───────────┘                                      │
 │             │                                                  │
 └─────────────┼──────────────────────────────────────────────────┘
@@ -75,15 +75,31 @@ This document provides comprehensive component diagrams, data flow visualization
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌────────────────┐  ┌────────────────┐  ┌──────────────────┐ │
-│  │ gpu-catalog    │  │ model-specs    │  │ Cloudflare Worker│ │
-│  │ .json          │  │ .json          │  │ (Live Pricing)   │ │
-│  │                │  │                │  │                  │ │
-│  │ 15 GPUs        │  │ Model params   │  │ 133 prices       │ │
-│  │ VRAM, bandwidth│  │ layers, heads  │  │ 15 GPUs          │ │
-│  └────────────────┘  └────────────────┘  └──────────────────┘ │
+│  │ gpu-catalog    │  │ HuggingFace    │  │ Cloudflare Worker│ │
+│  │ .json          │  │ config.json    │  │ (Live Pricing)   │ │
+│  │                │  │ (live fetch)   │  │                  │ │
+│  │ 15 GPUs        │  │ layers, heads, │  │ Live prices      │ │
+│  │ VRAM, bandwidth│  │ hidden size... │  │ 15 GPUs          │ │
+│  └────────────────┘  └───────┬────────┘  └──────────────────┘ │
+│                               │ fallback when fetch fails/      │
+│                               │ is incomplete                   │
+│                       ┌───────▼────────┐                        │
+│                       │ model-families │                        │
+│                       │ .json          │                        │
+│                       │ KV-category +  │                        │
+│                       │ config fallbacks│                       │
+│                       └────────────────┘                        │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+> **Note**: `models.ts` (`MODEL_CATALOG`) is display metadata only — id, name,
+> vendor, HF path, UI tags. It holds no architecture values (layers, hidden
+> size, heads). All per-model math uses the config fetched live from
+> HuggingFace at request time (`lib/huggingface/fetch-config.ts`), with
+> `model-families.json` supplying KV-cache-category detection and config
+> fallbacks for families whose `config.json` is incomplete or unconventional.
+> There is no `model-specs.json` file in this codebase.
 
 ---
 
@@ -283,15 +299,17 @@ Shows how data flows from user input through calculations to display.
      │
      ▼
 ┌─────────────────────────────────────────┐
-│  Display in Test Panel                  │
-│  🧪 TEST: Real Inference Engine         │
+│  Display in Flip Tiles + Memory Bar     │
 │                                         │
-│  Mock GPU Count: 1                      │
-│  ✨ Real GPU Count: 2                   │
+│  GPU Count: 2                           │
 │     (TP=2 × Replicas=1)                 │
 │  Bottleneck: TTFT                       │
 └─────────────────────────────────────────┘
 ```
+
+> The `testResult` / `setTestResult` variable names in `QuickEstimate.tsx`
+> are a holdover from early engine integration — they hold the live,
+> production result, not test/mock data.
 
 ---
 
@@ -300,15 +318,22 @@ Shows how data flows from user input through calculations to display.
 ```
 QuickEstimate.tsx
     │
+    ├─→ fetchModelConfig (from lib/huggingface/fetch-config.ts)
+    │       └─→ live GET of the model's config.json from HuggingFace
+    │           (8s timeout; failure/incompleteness falls back to
+    │            model-families.json + name-pattern detection)
+    │
     ├─→ computeInferenceConfig (from core.ts)
     │       │
-    │       ├─→ validateInferenceRequest (from validation.ts)
-    │       ├─→ recommendQuantization (from quantization.ts)
+    │       ├─→ validateOrThrow (from validation.ts)
+    │       ├─→ MODEL_CATALOG.find() (from models.ts) — display metadata only
+    │       ├─→ detectKVCategory / extractConfig (from kv-detect.ts, kv-config.ts)
+    │       │       └─→ model-families.json (KV category + config fallbacks)
+    │       ├─→ getStorageBytesPerParam / estimateWeightMemoryBytes (from weight-memory.ts)
     │       ├─→ computeTensorParallelSize (from tensor-parallel.ts)
     │       │       └─→ getGpuById (from gpus.ts)
     │       │               └─→ GPU_CATALOG (from gpu-catalog.json)
     │       ├─→ computeVLLMConfig (from vllm-defaults.ts)
-    │       │       └─→ getModelById (from models.ts)
     │       ├─→ classifyBottleneck (from bottleneck.ts)
     │       ├─→ determineParallelismStrategy (from parallelism.ts)
     │       └─→ computeLLMDConfig (from llmd.ts)
@@ -318,6 +343,11 @@ QuickEstimate.tsx
     ├─→ useCountUp (from quickEstimateHelpers.tsx)
     └─→ ProductTour (from components/ProductTour/)
 ```
+
+> **Note**: `quantization.ts` (`recommendQuantization()`) still exists and is
+> exported from the module's `index.ts`, but `core.ts` does not call it —
+> quantization is now detected inline from the live HuggingFace
+> `quantization_config` during weight-memory calculation.
 
 ---
 
@@ -351,76 +381,51 @@ QuickEstimate.tsx
 | Module | File | Purpose | Exports |
 |--------|------|---------|---------|
 | **GPU Catalog** | `gpus.ts` | Loads GPU specifications | `GPU_CATALOG`, `getGpuById()` |
-| **Model Catalog** | `models.ts` | Loads model specifications | `MODEL_CATALOG`, `getModelById()` |
+| **Model Catalog** | `models.ts` | Display metadata only (name, vendor, HF path, UI tags) — no architecture values | `MODEL_CATALOG` |
+| **Model Families** | `model-families.json` | Per-family KV-cache category + config fallback values, used when the live HuggingFace config is missing or incomplete | Raw JSON data |
 | **GPU JSON** | `gpu-catalog.json` | 15 GPU specs with VRAM, bandwidth, pricing | Raw JSON data |
 
 ---
 
 ## Current Integration Status
 
-### ✅ Step 1 Complete (Today)
+### ✅ Fully integrated (production)
+
+The Quick Estimate page runs the real inference engine directly on every
+input change — there is no mock-data mode or separate test panel; the earlier
+"🧪 TEST" naming on a couple of internal state variables is leftover from
+early integration and does not reflect a visible UI element anymore.
 
 ```
 ┌───────────────────────────────────────────────────────┐
 │  Quick Estimate Page                                  │
 │                                                       │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  🧪 Test Panel (Blue Box)                    │    │
-│  │                                              │    │
-│  │  Mock GPU Count: 1                           │    │
-│  │  ✨ Real GPU Count: 2 (TP=2 × Replicas=1)    │    │
-│  │  Bottleneck: TTFT                            │    │
-│  │  [View full result object ▼]                 │    │
-│  └──────────────────┬───────────────────────────┘    │
+│  1. fetchModelConfig() pulls the live HuggingFace     │
+│     config.json for the selected model (8s timeout,   │
+│     falls back to model-families.json config          │
+│     fallbacks / name-pattern detection on failure)    │
 │                     │                                │
-│                     │ Calls                          │
 │                     ▼                                │
-│           ┌──────────────────┐                       │
-│           │ Inference Engine │                       │
-│           └──────────────────┘                       │
-│                                                       │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  Flip Tiles (Still using mock data)         │    │
-│  │  - GPU count: 1 (mock)                       │    │
-│  │  - Weight: 16 GB (mock)                      │    │
-│  │  - KV cache: 245 MB (mock)                   │    │
-│  │  - Cost: $2,500 (mock)                       │    │
-│  └─────────────────────────────────────────────┘    │
+│  2. computeInferenceConfig() runs the full engine:    │
+│     KV-category detection, weight memory, TP sizing,  │
+│     replicas, vLLM config, bottleneck + parallelism   │
+│                     │                                │
+│                     ▼                                │
+│  3. Result renders directly into the flip tiles,      │
+│     the "Why this GPU count?" card, and the memory    │
+│     bar — all real data, no mock values                │
+│                     │                                │
+│                     ▼                                │
+│  4. GPU pricing is enriched live from the Cloudflare   │
+│     Worker (GET /api/v1/gpus?live_pricing=true),       │
+│     refreshed every 5 minutes                          │
 └───────────────────────────────────────────────────────┘
 ```
 
-### ⏳ Future State (Steps 2-8)
-
-```
-┌───────────────────────────────────────────────────────┐
-│  Quick Estimate Page                                  │
-│                                                       │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  Workload Controls                           │    │
-│  │  - Concurrent users slider                   │    │
-│  │  - ISL/OSL sliders                           │    │
-│  │  - Workload type dropdown                    │    │
-│  │  - SLA priority toggles                      │    │
-│  │  - Precision selector                        │    │
-│  └──────────────────┬───────────────────────────┘    │
-│                     │                                │
-│                     │ All inputs                     │
-│                     ▼                                │
-│           ┌──────────────────┐                       │
-│           │ Inference Engine │                       │
-│           └─────────┬────────┘                       │
-│                     │                                │
-│                     │ Real calculations              │
-│                     ▼                                │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  Flip Tiles (Real data from engine)         │    │
-│  │  - GPU count: 2 (TP=2 × 1)                   │    │
-│  │  - Weight: 140 GB (70B × 2 bytes)            │    │
-│  │  - KV cache: 45 GB                           │    │
-│  │  - Cost: $4,800/mo (live pricing)            │    │
-│  └─────────────────────────────────────────────┘    │
-└───────────────────────────────────────────────────────┘
-```
+Also live and wired to real data: concurrent-users/ISL/OSL sliders, workload
+type and SLA priority controls, weight/KV precision selectors, manual
+overrides for parallelism and vLLM config, the "Save estimate" flow, and the
+first-visit product tour.
 
 ---
 
@@ -439,13 +444,24 @@ QuickEstimate.tsx
      │
      ├─→ GET /api/v1/models
      │   │
-     │   └─→ Load model-specs.json
+     │   └─→ Load MODEL_CATALOG from models.ts (display metadata only)
      │
      └─→ POST /api/v1/config
+         │
+         ├─→ fetchModelConfig() — server-side HuggingFace config.json fetch
+         │   (8s timeout; non-fatal on failure, engine falls back to estimation)
          │
          └─→ Call computeInferenceConfig()
              └─→ Returns full inference result
 ```
+
+> **Admin surface (not yet merged into this branch)**: `public/pricing-admin.html`
+> is served statically with no app-level auth of its own. A root
+> `middleware.ts` that gates it behind HTTP Basic Auth (checked against
+> `PRICING_ADMIN_USERNAME` / `PRICING_ADMIN_PASSWORD`, failing closed if unset)
+> was added on `fix/secrets-ip-and-admin-gate` — it does not exist in this
+> worktree's checkout yet. Once that branch merges, `/pricing-admin.html`
+> requests will pass through `middleware.ts` before reaching the static file.
 
 ---
 
@@ -464,6 +480,9 @@ interface InferenceRequest {
   osl: number                       // Output sequence length (500)
   workload_type: 'chat' | 'rag' ... // Workload category
   sla_priority: 'ttft' | 'tpot' ... // Performance priority
+  hf_config?: HFModelConfig         // Live-fetched HuggingFace config.json
+                                     // (takes precedence over catalog/estimation)
+  // ...plus optional manual overrides for TP size, replicas, and vLLM config
 }
 
 // OUTPUT from inference engine
@@ -524,17 +543,26 @@ interface InferenceConfigResult {
 
 ---
 
-## Next Steps (Remaining Plan)
+## Next Steps
 
-- **Step 2**: Add interactive sliders to test panel
-- **Step 3**: Replace GPU count flip tile with real data
-- **Step 4**: Add workload controls to main UI
-- **Step 5**: Replace all flip tiles
-- **Step 6**: Integrate live pricing
-- **Step 7**: Remove mock data
-- **Step 8**: Polish and finalize
+The engine-integration plan that used to live in this section (test panel →
+interactive controls → live pricing → mock-data removal) is complete; all of
+it is described as current state above. Remaining work visible in the
+codebase today:
+
+- **Routing Economics** (`app/routing/`), **Hybrid Savings**
+  (`app/hybrid-savings/`), and **Cluster Cost** (`app/cluster-cost/`) are
+  built out but wrapped in `<ComingSoonRibbon>` — not yet promoted to fully
+  supported tools.
+- **Pricing admin auth**: see the note under [API Architecture](#api-architecture) —
+  `middleware.ts` exists on `fix/secrets-ip-and-admin-gate` but hasn't merged
+  into this branch yet.
 
 ---
 
-**Last Updated**: After Step 1 completion  
-**Status**: Test panel working, engine integrated, ready for Step 2
+**Last Updated**: Corrected to match current codebase state (inference
+engine fully integrated; see git history for prior "Step 1" milestone notes)
+
+**Status**: Inference engine fully integrated into Quick Estimate (production).
+Routing Economics, Hybrid Savings, and Cluster Cost remain gated behind
+"Coming Soon".
